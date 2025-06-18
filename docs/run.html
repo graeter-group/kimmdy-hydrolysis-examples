@@ -146,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using KIMMDY to simulate competing reactions in peptides</span></a>
+ <span class="menu-text">index.html</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="imports" class="level2">
 <h2 class="anchored" data-anchor-id="imports">Imports</h2>
-<div id="be3cecb6" class="cell" data-execution_count="1">
+<div id="9f521484" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
@@ -265,7 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="triplehelix-simulations" class="level1">
 <h1>Triplehelix Simulations</h1>
-<div id="8594b70b" class="cell" data-execution_count="2">
+<div id="a064cce5" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/triplehelix-hydrolysis"</span></span>
@@ -278,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="gather-topology-information" class="level2">
 <h2 class="anchored" data-anchor-id="gather-topology-information">Gather Topology Information</h2>
 <p>Write information about backbone bonds and generate a plumed.dat input files</p>
-<div id="a6f900db" class="cell" data-execution_count="3">
+<div id="8deffb59" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> system <span class="kw">in</span> systems:</span>
@@ -288,7 +288,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="generate-kimmdy-configs-and-mdp-files" class="level2">
 <h2 class="anchored" data-anchor-id="generate-kimmdy-configs-and-mdp-files">Generate KIMMDY configs and mdp files</h2>
-<div id="476891f4" class="cell" data-execution_count="4">
+<div id="270116d6" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
@@ -304,7 +304,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="run-equilibration-and-sampling-simulations" class="level2">
 <h2 class="anchored" data-anchor-id="run-equilibration-and-sampling-simulations">Run Equilibration and Sampling Simulations</h2>
-<div id="d687a506" class="cell" data-execution_count="5">
+<div id="602065de" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
@@ -321,7 +321,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="gather-bond-lengths-during-sampling-at-0nn" class="level2">
 <h2 class="anchored" data-anchor-id="gather-bond-lengths-during-sampling-at-0nn">Gather Bond Lengths during Sampling at 0nN</h2>
-<div id="9ab0d447" class="cell" data-execution_count="6">
+<div id="17194e10" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> system <span class="kw">in</span> systems:</span>
@@ -331,7 +331,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="query-reactions-using-trajectories-of-the-sampling-simulations" class="level2">
 <h2 class="anchored" data-anchor-id="query-reactions-using-trajectories-of-the-sampling-simulations">Query Reactions using Trajectories of the Sampling Simulations</h2>
-<div id="348e4fbc" class="cell" data-execution_count="7">
+<div id="b4815055" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>use_cluster_for_reactions <span class="op">=</span> <span class="va">False</span></span>
@@ -363,8 +363,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="collagen-fibril-simulations" class="level1">
 <h1>Collagen Fibril Simulations</h1>
-<p><code>/hits/fast/mbm/hartmaec/workdir/collagen_HAT/trivalent/md_files_dedop/</code></p>
-<div id="14644428" class="cell" data-execution_count="8">
+<div id="4d77f84e" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
@@ -377,13 +376,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="7cfc8215" class="cell" data-execution_count="9">
+<div id="23fceb03" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>write_topology_info(example, <span class="st">"collagen"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="6cc1c59f" class="cell" data-execution_count="10">
+<div id="be242da7" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
@@ -397,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="8cffd6f8" class="cell" data-execution_count="11">
+<div id="56069e22" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
@@ -407,31 +406,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>With shearing:</p>
-<div id="f4e5d296" class="cell" data-execution_count="12">
+<div id="4b108aca" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># forces_shear = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1]</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>forces_shear <span class="op">=</span> [<span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>]</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_shear,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> forces_shear:</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        kimmdy_run(Path(<span class="ss">f"kimmdy_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear.yml"</span>), generate_jobscript<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        slurm_dispatch(example, <span class="ss">f"run_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>forces_shear <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="dv">1</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_shear,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> forces_shear:</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        kimmdy_run(Path(<span class="ss">f"kimmdy_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear.yml"</span>), generate_jobscript<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        slurm_dispatch(example, <span class="ss">f"run_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="bond-lengths-in-equilibrium-at-0nn" class="level2">
 <h2 class="anchored" data-anchor-id="bond-lengths-in-equilibrium-at-0nn">Bond lengths in Equilibrium at 0nN</h2>
 <p>Using every 10th distance due to the big system. (nst of each distance = stride * STRIDE in plumed.dat)</p>
-<div id="e39f9c5f" class="cell" data-execution_count="13">
+<div id="bca3ef73" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># instead run: ipython ./scripts/collect_collagen_bond_stats.py</span></span>
@@ -442,7 +440,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="query-reactions-using-trajectories-of-the-sampling-simulations-1" class="level2">
 <h2 class="anchored" data-anchor-id="query-reactions-using-trajectories-of-the-sampling-simulations-1">Query Reactions using Trajectories of the Sampling Simulations</h2>
-<div id="1eab1d29" class="cell" data-execution_count="14">
+<div id="1e6bdb07" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>use_cluster_for_reactions <span class="op">=</span> <span class="va">True</span></span>
@@ -450,42 +448,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># forces_nN = [0, 1]</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>forces_nN <span class="op">=</span> [<span class="dv">1</span>]</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># shears = ["", "_shear"]</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">"_shear"</span>]</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_nN,</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster_for_reactions,</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> force <span class="kw">in</span> forces_nN:</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> rate_type <span class="kw">in</span> rate_types:</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shear <span class="kw">in</span> shears:</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> shear <span class="op">==</span> <span class="st">""</span> <span class="kw">and</span> force <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>                name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>force<span class="sc">}</span><span class="ss">nN_</span><span class="sc">{</span>ph<span class="sc">}</span><span class="ss">pH_</span><span class="sc">{</span>rate_type<span class="sc">}{</span>shear<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> use_cluster_for_reactions:</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>                        Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>),</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>                        generate_jobscript<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>                    slurm_dispatch(example, <span class="ss">f"run_react_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>forces_nN <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">""</span>, <span class="st">"_shear"</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_nN,</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster_for_reactions,</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> force <span class="kw">in</span> forces_nN:</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> rate_type <span class="kw">in</span> rate_types:</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shear <span class="kw">in</span> shears:</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> shear <span class="op">==</span> <span class="st">""</span> <span class="kw">and</span> force <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>                name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>force<span class="sc">}</span><span class="ss">nN_</span><span class="sc">{</span>ph<span class="sc">}</span><span class="ss">pH_</span><span class="sc">{</span>rate_type<span class="sc">}{</span>shear<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> use_cluster_for_reactions:</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>                        Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>),</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>                        generate_jobscript<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>                    slurm_dispatch(example, <span class="ss">f"run_react_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="099d38ce" class="cell" data-execution_count="15">
+<div id="99b483e2" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
@@ -1280,159 +1276,154 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-146"><a href="#cb17-146" aria-hidden="true" tabindex="-1"></a><span class="fu"># Collagen Fibril Simulations</span></span>
 <span id="cb17-147"><a href="#cb17-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a><span class="in">`/hits/fast/mbm/hartmaec/workdir/collagen_HAT/trivalent/md_files_dedop/`</span></span>
-<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
-<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
-<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
-<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a>forces_nN <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
-<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
-<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">""</span>, <span class="st">"_shear"</span>]</span>
-<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
-<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
-<span id="cb17-161"><a href="#cb17-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-162"><a href="#cb17-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-165"><a href="#cb17-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-166"><a href="#cb17-166" aria-hidden="true" tabindex="-1"></a>write_topology_info(example, <span class="st">"collagen"</span>)</span>
-<span id="cb17-167"><a href="#cb17-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-168"><a href="#cb17-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-171"><a href="#cb17-171" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-172"><a href="#cb17-172" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
-<span id="cb17-173"><a href="#cb17-173" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
-<span id="cb17-174"><a href="#cb17-174" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
-<span id="cb17-175"><a href="#cb17-175" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_nN,</span>
-<span id="cb17-176"><a href="#cb17-176" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
-<span id="cb17-177"><a href="#cb17-177" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
-<span id="cb17-178"><a href="#cb17-178" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster,</span>
-<span id="cb17-179"><a href="#cb17-179" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
-<span id="cb17-180"><a href="#cb17-180" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-181"><a href="#cb17-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-182"><a href="#cb17-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
-<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> forces_nN:</span>
-<span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a>        kimmdy_run(Path(<span class="ss">f"kimmdy_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN.yml"</span>), generate_jobscript<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-189"><a href="#cb17-189" aria-hidden="true" tabindex="-1"></a>        slurm_dispatch(example, <span class="ss">f"run_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN"</span>)</span>
-<span id="cb17-190"><a href="#cb17-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
+<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
+<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
+<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a>forces_nN <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
+<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">""</span>, <span class="st">"_shear"</span>]</span>
+<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
+<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
+<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-164"><a href="#cb17-164" aria-hidden="true" tabindex="-1"></a>write_topology_info(example, <span class="st">"collagen"</span>)</span>
+<span id="cb17-165"><a href="#cb17-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-166"><a href="#cb17-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-169"><a href="#cb17-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-170"><a href="#cb17-170" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
+<span id="cb17-171"><a href="#cb17-171" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
+<span id="cb17-172"><a href="#cb17-172" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
+<span id="cb17-173"><a href="#cb17-173" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_nN,</span>
+<span id="cb17-174"><a href="#cb17-174" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
+<span id="cb17-175"><a href="#cb17-175" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
+<span id="cb17-176"><a href="#cb17-176" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster,</span>
+<span id="cb17-177"><a href="#cb17-177" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
+<span id="cb17-178"><a href="#cb17-178" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-179"><a href="#cb17-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-180"><a href="#cb17-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-183"><a href="#cb17-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-184"><a href="#cb17-184" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
+<span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> forces_nN:</span>
+<span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a>        kimmdy_run(Path(<span class="ss">f"kimmdy_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN.yml"</span>), generate_jobscript<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a>        slurm_dispatch(example, <span class="ss">f"run_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN"</span>)</span>
+<span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-189"><a href="#cb17-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-190"><a href="#cb17-190" aria-hidden="true" tabindex="-1"></a>With shearing:</span>
 <span id="cb17-191"><a href="#cb17-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-192"><a href="#cb17-192" aria-hidden="true" tabindex="-1"></a>With shearing:</span>
-<span id="cb17-193"><a href="#cb17-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-196"><a href="#cb17-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a><span class="co"># forces_shear = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1]</span></span>
-<span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a>forces_shear <span class="op">=</span> [<span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>]</span>
-<span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
-<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
-<span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
-<span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
-<span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_shear,</span>
-<span id="cb17-204"><a href="#cb17-204" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
-<span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
-<span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster,</span>
-<span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
-<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-209"><a href="#cb17-209" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
-<span id="cb17-210"><a href="#cb17-210" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> forces_shear:</span>
-<span id="cb17-211"><a href="#cb17-211" aria-hidden="true" tabindex="-1"></a>        kimmdy_run(Path(<span class="ss">f"kimmdy_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear.yml"</span>), generate_jobscript<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a>        slurm_dispatch(example, <span class="ss">f"run_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear"</span>)</span>
-<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bond lengths in Equilibrium at 0nN</span></span>
+<span id="cb17-194"><a href="#cb17-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-195"><a href="#cb17-195" aria-hidden="true" tabindex="-1"></a>forces_shear <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="dv">1</span>]</span>
+<span id="cb17-196"><a href="#cb17-196" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
+<span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
+<span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
+<span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
+<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_shear,</span>
+<span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
+<span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
+<span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster,</span>
+<span id="cb17-204"><a href="#cb17-204" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
+<span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
+<span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> forces_shear:</span>
+<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a>        kimmdy_run(Path(<span class="ss">f"kimmdy_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear.yml"</span>), generate_jobscript<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-209"><a href="#cb17-209" aria-hidden="true" tabindex="-1"></a>        slurm_dispatch(example, <span class="ss">f"run_eq_</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">nN_shear"</span>)</span>
+<span id="cb17-210"><a href="#cb17-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-211"><a href="#cb17-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bond lengths in Equilibrium at 0nN</span></span>
+<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a>Using every 10th distance due to the big system.</span>
+<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a>(nst of each distance = stride * STRIDE in plumed.dat)</span>
 <span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>Using every 10th distance due to the big system.</span>
-<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a>(nst of each distance = stride * STRIDE in plumed.dat)</span>
-<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a><span class="co"># | eval: false</span></span>
-<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a><span class="co"># instead run: ipython ./scripts/collect_collagen_bond_stats.py</span></span>
-<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a><span class="co"># on HPC node</span></span>
-<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a>gather_0_dists_and_forces(example, system, dt<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## Query Reactions using Trajectories of the Sampling Simulations</span></span>
-<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-233"><a href="#cb17-233" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-234"><a href="#cb17-234" aria-hidden="true" tabindex="-1"></a>use_cluster_for_reactions <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb17-235"><a href="#cb17-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
-<span id="cb17-237"><a href="#cb17-237" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
-<span id="cb17-238"><a href="#cb17-238" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
-<span id="cb17-239"><a href="#cb17-239" aria-hidden="true" tabindex="-1"></a><span class="co"># forces_nN = [0, 1]</span></span>
-<span id="cb17-240"><a href="#cb17-240" aria-hidden="true" tabindex="-1"></a>forces_nN <span class="op">=</span> [<span class="dv">1</span>]</span>
-<span id="cb17-241"><a href="#cb17-241" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
-<span id="cb17-242"><a href="#cb17-242" aria-hidden="true" tabindex="-1"></a><span class="co"># shears = ["", "_shear"]</span></span>
-<span id="cb17-243"><a href="#cb17-243" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">"_shear"</span>]</span>
-<span id="cb17-244"><a href="#cb17-244" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
-<span id="cb17-245"><a href="#cb17-245" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
-<span id="cb17-246"><a href="#cb17-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-247"><a href="#cb17-247" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
-<span id="cb17-248"><a href="#cb17-248" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
-<span id="cb17-249"><a href="#cb17-249" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
-<span id="cb17-250"><a href="#cb17-250" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_nN,</span>
-<span id="cb17-251"><a href="#cb17-251" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
-<span id="cb17-252"><a href="#cb17-252" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
-<span id="cb17-253"><a href="#cb17-253" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster_for_reactions,</span>
-<span id="cb17-254"><a href="#cb17-254" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
-<span id="cb17-255"><a href="#cb17-255" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-256"><a href="#cb17-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-257"><a href="#cb17-257" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
-<span id="cb17-258"><a href="#cb17-258" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> force <span class="kw">in</span> forces_nN:</span>
-<span id="cb17-259"><a href="#cb17-259" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> rate_type <span class="kw">in</span> rate_types:</span>
-<span id="cb17-260"><a href="#cb17-260" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shear <span class="kw">in</span> shears:</span>
-<span id="cb17-261"><a href="#cb17-261" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> shear <span class="op">==</span> <span class="st">""</span> <span class="kw">and</span> force <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb17-262"><a href="#cb17-262" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
-<span id="cb17-263"><a href="#cb17-263" aria-hidden="true" tabindex="-1"></a>                name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>force<span class="sc">}</span><span class="ss">nN_</span><span class="sc">{</span>ph<span class="sc">}</span><span class="ss">pH_</span><span class="sc">{</span>rate_type<span class="sc">}{</span>shear<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb17-264"><a href="#cb17-264" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> use_cluster_for_reactions:</span>
-<span id="cb17-265"><a href="#cb17-265" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(</span>
-<span id="cb17-266"><a href="#cb17-266" aria-hidden="true" tabindex="-1"></a>                        Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>),</span>
-<span id="cb17-267"><a href="#cb17-267" aria-hidden="true" tabindex="-1"></a>                        generate_jobscript<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb17-268"><a href="#cb17-268" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb17-269"><a href="#cb17-269" aria-hidden="true" tabindex="-1"></a>                    slurm_dispatch(example, <span class="ss">f"run_react_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb17-270"><a href="#cb17-270" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb17-271"><a href="#cb17-271" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>))</span>
-<span id="cb17-272"><a href="#cb17-272" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-273"><a href="#cb17-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-274"><a href="#cb17-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-277"><a href="#cb17-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb17-278"><a href="#cb17-278" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
-<span id="cb17-279"><a href="#cb17-279" aria-hidden="true" tabindex="-1"></a>use_cluster_for_reactions <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb17-280"><a href="#cb17-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-281"><a href="#cb17-281" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
-<span id="cb17-282"><a href="#cb17-282" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
-<span id="cb17-283"><a href="#cb17-283" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
-<span id="cb17-284"><a href="#cb17-284" aria-hidden="true" tabindex="-1"></a>forces_shear <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="dv">1</span>]</span>
-<span id="cb17-285"><a href="#cb17-285" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
-<span id="cb17-286"><a href="#cb17-286" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">"_shear"</span>]</span>
-<span id="cb17-287"><a href="#cb17-287" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
-<span id="cb17-288"><a href="#cb17-288" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
-<span id="cb17-289"><a href="#cb17-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-290"><a href="#cb17-290" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
-<span id="cb17-291"><a href="#cb17-291" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
-<span id="cb17-292"><a href="#cb17-292" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
-<span id="cb17-293"><a href="#cb17-293" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_shear,</span>
-<span id="cb17-294"><a href="#cb17-294" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
-<span id="cb17-295"><a href="#cb17-295" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
-<span id="cb17-296"><a href="#cb17-296" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster_for_reactions,</span>
-<span id="cb17-297"><a href="#cb17-297" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
-<span id="cb17-298"><a href="#cb17-298" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-299"><a href="#cb17-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-300"><a href="#cb17-300" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
-<span id="cb17-301"><a href="#cb17-301" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> force <span class="kw">in</span> forces_shear:</span>
-<span id="cb17-302"><a href="#cb17-302" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> rate_type <span class="kw">in</span> rate_types:</span>
-<span id="cb17-303"><a href="#cb17-303" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shear <span class="kw">in</span> shears:</span>
-<span id="cb17-304"><a href="#cb17-304" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> shear <span class="op">==</span> <span class="st">""</span> <span class="kw">and</span> force <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb17-305"><a href="#cb17-305" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
-<span id="cb17-306"><a href="#cb17-306" aria-hidden="true" tabindex="-1"></a>                name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>force<span class="sc">}</span><span class="ss">nN_</span><span class="sc">{</span>ph<span class="sc">}</span><span class="ss">pH_</span><span class="sc">{</span>rate_type<span class="sc">}{</span>shear<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb17-307"><a href="#cb17-307" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> use_cluster_for_reactions:</span>
-<span id="cb17-308"><a href="#cb17-308" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(</span>
-<span id="cb17-309"><a href="#cb17-309" aria-hidden="true" tabindex="-1"></a>                        Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>),</span>
-<span id="cb17-310"><a href="#cb17-310" aria-hidden="true" tabindex="-1"></a>                        generate_jobscript<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb17-311"><a href="#cb17-311" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb17-312"><a href="#cb17-312" aria-hidden="true" tabindex="-1"></a>                    slurm_dispatch(example, <span class="ss">f"run_react_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb17-313"><a href="#cb17-313" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb17-314"><a href="#cb17-314" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>))</span>
-<span id="cb17-315"><a href="#cb17-315" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-316"><a href="#cb17-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a><span class="co"># | eval: false</span></span>
+<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a><span class="co"># instead run: ipython ./scripts/collect_collagen_bond_stats.py</span></span>
+<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a><span class="co"># on HPC node</span></span>
+<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a>gather_0_dists_and_forces(example, system, dt<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## Query Reactions using Trajectories of the Sampling Simulations</span></span>
+<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-231"><a href="#cb17-231" aria-hidden="true" tabindex="-1"></a>use_cluster_for_reactions <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb17-232"><a href="#cb17-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-233"><a href="#cb17-233" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
+<span id="cb17-234"><a href="#cb17-234" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
+<span id="cb17-235"><a href="#cb17-235" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
+<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a>forces_nN <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb17-237"><a href="#cb17-237" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
+<span id="cb17-238"><a href="#cb17-238" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">""</span>, <span class="st">"_shear"</span>]</span>
+<span id="cb17-239"><a href="#cb17-239" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
+<span id="cb17-240"><a href="#cb17-240" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
+<span id="cb17-241"><a href="#cb17-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-242"><a href="#cb17-242" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
+<span id="cb17-243"><a href="#cb17-243" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
+<span id="cb17-244"><a href="#cb17-244" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
+<span id="cb17-245"><a href="#cb17-245" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_nN,</span>
+<span id="cb17-246"><a href="#cb17-246" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
+<span id="cb17-247"><a href="#cb17-247" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
+<span id="cb17-248"><a href="#cb17-248" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster_for_reactions,</span>
+<span id="cb17-249"><a href="#cb17-249" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
+<span id="cb17-250"><a href="#cb17-250" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-251"><a href="#cb17-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-252"><a href="#cb17-252" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
+<span id="cb17-253"><a href="#cb17-253" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> force <span class="kw">in</span> forces_nN:</span>
+<span id="cb17-254"><a href="#cb17-254" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> rate_type <span class="kw">in</span> rate_types:</span>
+<span id="cb17-255"><a href="#cb17-255" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shear <span class="kw">in</span> shears:</span>
+<span id="cb17-256"><a href="#cb17-256" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> shear <span class="op">==</span> <span class="st">""</span> <span class="kw">and</span> force <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb17-257"><a href="#cb17-257" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb17-258"><a href="#cb17-258" aria-hidden="true" tabindex="-1"></a>                name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>force<span class="sc">}</span><span class="ss">nN_</span><span class="sc">{</span>ph<span class="sc">}</span><span class="ss">pH_</span><span class="sc">{</span>rate_type<span class="sc">}{</span>shear<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb17-259"><a href="#cb17-259" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> use_cluster_for_reactions:</span>
+<span id="cb17-260"><a href="#cb17-260" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(</span>
+<span id="cb17-261"><a href="#cb17-261" aria-hidden="true" tabindex="-1"></a>                        Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>),</span>
+<span id="cb17-262"><a href="#cb17-262" aria-hidden="true" tabindex="-1"></a>                        generate_jobscript<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb17-263"><a href="#cb17-263" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb17-264"><a href="#cb17-264" aria-hidden="true" tabindex="-1"></a>                    slurm_dispatch(example, <span class="ss">f"run_react_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-265"><a href="#cb17-265" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb17-266"><a href="#cb17-266" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>))</span>
+<span id="cb17-267"><a href="#cb17-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-268"><a href="#cb17-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-269"><a href="#cb17-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-272"><a href="#cb17-272" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-273"><a href="#cb17-273" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> <span class="st">"collagen"</span></span>
+<span id="cb17-274"><a href="#cb17-274" aria-hidden="true" tabindex="-1"></a>use_cluster_for_reactions <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb17-275"><a href="#cb17-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-276"><a href="#cb17-276" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> root <span class="op">/</span> <span class="st">"examples/collagen-hydrolysis"</span></span>
+<span id="cb17-277"><a href="#cb17-277" aria-hidden="true" tabindex="-1"></a>systems <span class="op">=</span> [<span class="st">"collagen"</span>]</span>
+<span id="cb17-278"><a href="#cb17-278" aria-hidden="true" tabindex="-1"></a>system <span class="op">=</span> systems[<span class="dv">0</span>]</span>
+<span id="cb17-279"><a href="#cb17-279" aria-hidden="true" tabindex="-1"></a>forces_shear <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="dv">1</span>]</span>
+<span id="cb17-280"><a href="#cb17-280" aria-hidden="true" tabindex="-1"></a>rate_types <span class="op">=</span> [<span class="st">"theo"</span>, <span class="st">"exp"</span>]</span>
+<span id="cb17-281"><a href="#cb17-281" aria-hidden="true" tabindex="-1"></a>shears <span class="op">=</span> [<span class="st">"_shear"</span>]</span>
+<span id="cb17-282"><a href="#cb17-282" aria-hidden="true" tabindex="-1"></a>phs <span class="op">=</span> [<span class="fl">7.4</span>]</span>
+<span id="cb17-283"><a href="#cb17-283" aria-hidden="true" tabindex="-1"></a>ph <span class="op">=</span> phs[<span class="dv">0</span>]</span>
+<span id="cb17-284"><a href="#cb17-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-285"><a href="#cb17-285" aria-hidden="true" tabindex="-1"></a>fill_templates(</span>
+<span id="cb17-286"><a href="#cb17-286" aria-hidden="true" tabindex="-1"></a>    example<span class="op">=</span>example,</span>
+<span id="cb17-287"><a href="#cb17-287" aria-hidden="true" tabindex="-1"></a>    systems<span class="op">=</span>systems,</span>
+<span id="cb17-288"><a href="#cb17-288" aria-hidden="true" tabindex="-1"></a>    forces_nN<span class="op">=</span>forces_shear,</span>
+<span id="cb17-289"><a href="#cb17-289" aria-hidden="true" tabindex="-1"></a>    phs<span class="op">=</span>phs,</span>
+<span id="cb17-290"><a href="#cb17-290" aria-hidden="true" tabindex="-1"></a>    rate_types<span class="op">=</span>rate_types,</span>
+<span id="cb17-291"><a href="#cb17-291" aria-hidden="true" tabindex="-1"></a>    use_cluster<span class="op">=</span>use_cluster_for_reactions,</span>
+<span id="cb17-292"><a href="#cb17-292" aria-hidden="true" tabindex="-1"></a>    shears<span class="op">=</span>shears,</span>
+<span id="cb17-293"><a href="#cb17-293" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-294"><a href="#cb17-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-295"><a href="#cb17-295" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pushd(example):</span>
+<span id="cb17-296"><a href="#cb17-296" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> force <span class="kw">in</span> forces_shear:</span>
+<span id="cb17-297"><a href="#cb17-297" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> rate_type <span class="kw">in</span> rate_types:</span>
+<span id="cb17-298"><a href="#cb17-298" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shear <span class="kw">in</span> shears:</span>
+<span id="cb17-299"><a href="#cb17-299" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> shear <span class="op">==</span> <span class="st">""</span> <span class="kw">and</span> force <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb17-300"><a href="#cb17-300" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb17-301"><a href="#cb17-301" aria-hidden="true" tabindex="-1"></a>                name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>force<span class="sc">}</span><span class="ss">nN_</span><span class="sc">{</span>ph<span class="sc">}</span><span class="ss">pH_</span><span class="sc">{</span>rate_type<span class="sc">}{</span>shear<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb17-302"><a href="#cb17-302" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> use_cluster_for_reactions:</span>
+<span id="cb17-303"><a href="#cb17-303" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(</span>
+<span id="cb17-304"><a href="#cb17-304" aria-hidden="true" tabindex="-1"></a>                        Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>),</span>
+<span id="cb17-305"><a href="#cb17-305" aria-hidden="true" tabindex="-1"></a>                        generate_jobscript<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb17-306"><a href="#cb17-306" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb17-307"><a href="#cb17-307" aria-hidden="true" tabindex="-1"></a>                    slurm_dispatch(example, <span class="ss">f"run_react_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-308"><a href="#cb17-308" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb17-309"><a href="#cb17-309" aria-hidden="true" tabindex="-1"></a>                    kimmdy_run(Path(<span class="ss">f"kimmdy_just_reactions_</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.yml"</span>))</span>
+<span id="cb17-310"><a href="#cb17-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-311"><a href="#cb17-311" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

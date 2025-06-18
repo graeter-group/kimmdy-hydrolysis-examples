@@ -1,6 +1,1 @@
----
-title: Using KIMMDY to simulate competing reactions in peptides
----
-
-Running the simulations: [`run.qmd`](run.qmd).
-
+{{< include readme.md >}}

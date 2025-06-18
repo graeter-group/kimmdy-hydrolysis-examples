@@ -131,8 +131,6 @@ with pushd(example):
 
 # Collagen Fibril Simulations
 
-`/hits/fast/mbm/hartmaec/workdir/collagen_HAT/trivalent/md_files_dedop/`
-
 ```{python}
 example = root / "examples/collagen-hydrolysis"
 systems = ["collagen"]
@@ -170,8 +168,7 @@ with pushd(example):
 With shearing:
 
 ```{python}
-# forces_shear = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1]
-forces_shear = [0.7, 0.8, 0.9]
+forces_shear = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 system = "collagen"
 fill_templates(
     example=example,
@@ -208,11 +205,9 @@ use_cluster_for_reactions = True
 example = root / "examples/collagen-hydrolysis"
 systems = ["collagen"]
 system = systems[0]
-# forces_nN = [0, 1]
-forces_nN = [1]
+forces_nN = [0, 1]
 rate_types = ["theo", "exp"]
-# shears = ["", "_shear"]
-shears = ["_shear"]
+shears = ["", "_shear"]
 phs = [7.4]
 ph = phs[0]
 
