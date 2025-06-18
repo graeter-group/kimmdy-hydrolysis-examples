@@ -1,0 +1,32 @@
+name: run
+gromacs_alias: 'gmx'
+gmx_mdrun_flags: -maxh 24 -dlb yes -nt 10
+topology:
+  reactive:
+    include: "SOL"
+ndx: 'index.ndx'
+top: 'topol.top'
+gro: 'npt.gro'
+# plumed: plumed.dat
+
+mds:
+  eq:
+    mdp: 'md.mdp'
+    # use_plumed: true
+  relax:
+    mdp: 'relax.mdp'
+changer:
+  topology:
+    parameterization: basic
+  coordinates:
+    md: 'relax'
+    slow_growth: true
+parameterize_at_setup: false
+reactions:
+  hydrolysis:
+    kmc: rfkmc
+    step: 1
+    cutoff: 5
+    external_force: 0
+sequence:
+  - eq

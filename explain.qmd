@@ -1,0 +1,344 @@
+---
+title: Interactively stepping through KIMMDY
+execute:
+  eval: false
+---
+
+# Setup
+
+```{python}
+#| eval: true
+from kimmdy.config import Config
+from kimmdy.runmanager import RunManager, State
+from kimmdy.plugins import reaction_plugins, discover_plugins, parameterization_plugins
+from kimmdy.analysis import concat_traj, plot_rates
+from kimmdy.tasks import TaskFiles
+from kimmdy_hydrolysis.reaction import HydrolysisReaction
+
+discover_plugins()
+```
+
+Note, that In order for kimmdy in our python session to know about the plugins we have installed,
+we need to discover them (see above).
+
+Check that your plugin is registered with kimmdy:
+
+```{python}
+#| eval: true
+reaction_plugins
+```
+
+```{python}
+#| eval: true
+parameterization_plugins
+```
+
+# Full kimmdy run with hydrolysis
+
+Create a configuration object from python:
+
+```{python}
+config = Config(
+  opts={
+    "name": "run",
+    "cwd": "./examples/triplehelix-hydrolysis/",
+    "sequence": ["pull-short", "reactions", "pull", "reactions", "pull"],
+    "reactions": {
+      "hydrolysis_naive": {
+        "arrhenius_equation": {
+          "frequency_factor": 0.288,
+          "temperature": 300
+        }
+      },
+      "homolysis": {
+        "arrhenius_equation": {
+          "frequency_factor": 0.288,
+          "temperature": 300
+        },
+        "edis": "assets/edissoc.dat",
+        "itp": "assets/ffbonded.itp"
+      }
+    },
+    "plumed": "assets/plumed.dat",
+    "mds": {
+      "pull-short": {
+        "mdp": "pull-short.mdp",
+      },
+      "pull": {
+        "mdp": "pull.mdp",
+      },
+      "relax": {
+        "mdp": "relax.mdp",
+      },
+    },
+    "topology": {
+      "reactive": {"include": "SOL"},
+    },
+    "parameterize_at_setup": False,
+    "changer": {
+      "topology": {
+        "parameterization": "grappa",
+      },
+      "coordinates": {
+        "md": "relax",
+        "slow_growth": True,
+      },
+    },
+    "kmc": "rfkmc",
+    "top": "triple.top",
+    "gro": "triple-eq.gro",
+    "ndx": "index.ndx",
+    # by supplying already pre-caculated trajectories, we can skip the md part
+    # for testing purposes
+    "tpr": "pull.tpr",
+    "xtc": "pull.xtc",
+    "trr": "pull.trr"
+  }
+)
+```
+
+## Explore
+
+```{python}
+run = RunManager(config=config)
+```
+
+### Explore Hydrolysis
+
+```{python}
+hyd = HydrolysisReaction('hydrolysis_naive', run)
+```
+
+```{python}
+files = TaskFiles(run.get_latest)
+```
+
+```{python}
+result = hyd.get_recipe_collection(files)
+```
+
+
+```{python}
+result.recipes[0]
+```
+
+
+We can check again what tasks are currently planned:
+
+```{python}
+run.tasks.queue
+```
+
+We could run all the tasks
+
+```{python}
+# | eval: false
+while run.state != State.DONE:
+    next(run)
+```
+
+Or instead step thorugh one by one.
+
+Note, that tasks can also add intermediate tasks to a queue that
+will be cleared before the next task in the `tasks` queue is executed.
+Right now it is empty:
+
+```{python}
+run.priority_tasks.queue
+```
+
+Calling the `next` function on the `RunManager` instance will execute the next task in the queue.
+Let's do this three times:
+
+```{python}
+for i in range(2):
+    next(run)
+```
+
+The `place_reaction_tasks` task should now have filled the `priority_tasks` queue:
+
+```{python}
+run.priority_tasks.queue
+```
+
+Because of this, the next task will be `query_rection` (one tasks per reaction,
+but in this case we only have one reaction):
+
+```{python}
+next(run)
+```
+
+`priority_tasks` is now empty:
+
+```{python}
+run.priority_tasks.queue
+```
+
+So the next task will decide on a `Recipe` based on the results it got from the reaction plugins:
+
+```{python}
+run.tasks.queue
+```
+
+```{python}
+run.recipe_collection.recipes[:3]
+```
+
+```{python}
+next(run)
+```
+
+Our Kinetic Monte Carlo (KMC) result is now available:
+
+```{python}
+run.kmcresult
+```
+
+So the next task will execute the chosen reaction's recipe.
+
+```{python}
+next(run)
+```
+
+## Just the reaction
+
+```{python}
+opts_for_just_reaction = {
+    "name": "run",
+    "cwd": "./examples/settles/",
+    "sequence": ["reactions"],
+    "reactions": {
+        "hydrolysis_naive": {
+            "rates_per_frame": True,
+            "manual_residuetypes": False,
+            "relax": False,
+        }
+    },
+    "mds": {
+        "relax": {
+            "mdp": "relax.mdp",
+        },
+    },
+    "topology": {
+        "reactive": {"include": "SOL"},
+    },
+    "parameterize_at_setup": False,
+    "changer": {
+        "topology": {
+            "parameterization": "grappa",
+        },
+        "coordinates": {
+            "md": "relax",
+            "slow_growth": True,
+        },
+    },
+    "kmc": "rfkmc",
+    "top": "triple.top",
+    "gro": "triple-eq.gro",
+    "ndx": "index.ndx",
+    "tpr": "pull.tpr",
+    "xtc": "pull.xtc",
+    "trr": "pull.trr"
+}
+config = Config(opts=opts_for_just_reaction)
+run = RunManager(config=config)
+run.run()
+```
+
+
+# Archiv
+
+```{python}
+opts_for_just_reaction = {
+    "name": "run",
+    "cwd": "./examples/triplehelix-hydrolysis/",
+    "sequence": ["reactions"],
+    "reactions": {
+        "hydrolysis_naive": {
+        }
+    },
+    "mds": {
+        "relax": {
+            "mdp": "pull-slow-growth.mdp",
+        },
+    },
+    "topology": {
+        "reactive": {"include": "SOL"},
+    },
+    "parameterize_at_setup": False,
+    "changer": {
+        "topology": {
+            "parameterization": "grappa",
+        },
+        "coordinates": {
+            "md": "relax",
+            "slow_growth": True,
+        },
+    },
+    "kmc": "rfkmc",
+    "top": "triple.top",
+    "gro": "triple-eq.gro",
+    "ndx": "index.ndx",
+    "tpr": "pull.tpr",
+    "xtc": "pull.xtc",
+    "trr": "pull.trr"
+}
+```
+
+
+```{python}
+run2 = RunManager(config=Config(opts=opts_for_just_reaction))
+```
+
+```{python}
+for i in range(3):
+    next(run2)
+```
+
+```{python}
+next(run2)
+```
+
+
+```{python}
+run2.recipe_collection
+```
+
+```{python}
+run2.tasks.queue
+```
+
+```{python}
+run2.kmcresult
+```
+
+```{python}
+next(run2)
+```
+
+```{python}
+# | eval: false
+while run2.state != State.DONE:
+    next(run2)
+```
+
+`kimmdy.3_apply_recipe INFO: Recipe:  642⚡644 131300⚡131301 131300⚡131302 131300➡642 131301➡644 131302➡64`
+
+
+```{python}
+concat_traj(
+  dir = "./examples/triplehelix-hydrolysis/run_010/",
+  filetype="xtc",
+  steps="all",
+  output_group="System",
+  open_vmd=True
+)
+```
+
+```{python}
+plot_rates(
+  dir = "./examples/triplehelix-hydrolysis/run_022/",
+)
+```
+
+

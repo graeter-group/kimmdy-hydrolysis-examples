@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/graeter-group/kimmdy/refs/heads/main/src/kimmdy/kimmdy-yaml-schema.json
+name: "run_react_single_0nN_7pH_exp"
+gromacs_alias: 'gmx'
+gmx_mdrun_flags: ${md_flags}
+max_hours: 0
+restart: true
+just_sample: true
+slurm:
+  N: 1
+  ntasks_per_node: 40
+  mincpus: 40
+  cpus_per_task: 1
+  gpus: 2
+  runcmd: sbatch
+  partition: 'cascade.p'
+# even though we have hydrolysis, in the just_sample
+# mode the reaction never gets executed,
+# so we don't need water in the reactive moleculetype
+# topology:
+#   reactive:
+#     include: "SOL"
+ndx: './assets/single.ndx'
+top: './assets/single.top'
+edissoc: ./assets/edissoc.dat
+gro: 'run_eq_single_0nN/1_eq/eq.gro'
+xtc: 'run_eq_single_0nN/2_pull/pull.xtc'
+trr: 'run_eq_single_0nN/2_pull/pull.trr'
+tpr: 'run_eq_single_0nN/2_pull/pull.tpr'
+plumed: 'run_eq_single_0nN/0_setup/single_plumed.dat'
+mds:
+  eq:
+    mdp: './eq_single_0nN.mdp'
+  relax:
+    mdp: './relax_single_0nN.mdp'
+changer:
+  topology:
+    parameterization: basic
+  coordinates:
+    slow_growth: yes
+    md: relax
+parameterize_at_setup: false
+reactions:
+  homolysis:
+    recompute_bondstats: false
+    arrhenius_equation:
+      frequency_factor: 0.288
+      temperature: 300
+  hydrolysis:
+    step: 10
+    cutoff: 6
+    ph_value: 7
+    external_force: -1
+    bondstats_at_0: ./assets/single_bondstats.csv
+    temperature: 300
+    theoretical_rates:
+      use: False
+sequence:
+  - reactions

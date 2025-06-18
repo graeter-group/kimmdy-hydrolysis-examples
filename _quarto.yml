@@ -1,0 +1,44 @@
+project:
+  title: KIMMDY Examples
+  type: website
+  output-dir: docs
+  render:
+    - "!deps/"
+    - "*.qmd"
+
+bibliography: references.bib
+
+website:
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - index.qmd
+      - run.qmd
+      - hydrolysis.qmd
+      - explain.qmd
+format:
+  html:
+    code-tools: true
+    code-fold: true
+    code-copy: true
+    toc: true
+    toc-depth: 5
+    toc-expand: true
+    mainfont: Roboto
+    number-depth: 0
+    highlight-style: arrow
+    lightbox: true
+    theme:
+      light:
+      - www/theme.scss
+      dark:
+      - www/theme.scss
+      - www/theme-dark.scss
+
+execute:
+  warning: false
+  echo: true
+  freeze: auto
+  eval: false
+

@@ -1,0 +1,744 @@
+---
+title: Analysis
+execute:
+  eval: true
+---
+
+# Setup
+
+```{python}
+from kimmdy.topology.topology import Topology
+import pandas as pd
+import numpy as np
+from plotnine import *  # pyright: ignore
+import matplotlib.pyplot as plt
+from src.analysis import get_rates, get_sasa, prepare_data
+from src.constants import MAX_SASA
+from src.parsing import read_gro
+from src.style import (
+    HITS_CYAN,
+    HITS_DARKBLUE,
+    HITS_MAGENTA,
+    rc,
+    DPI,
+    experiment,
+    experiment_light,
+    single_column,
+    double_column,
+)
+from pathlib import Path
+from src.utils import read_xvg
+
+pd.options.mode.chained_assignment = None  # default='warn'
+
+# plt.ion()
+
+root = Path().resolve()
+systems = ["single", "triple", "collagen"]
+forces_nN = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3]
+phs = [7, 7.4, 12]
+rate_types = ["theo", "exp"]
+shears = ["", "_shear"]
+```
+
+## Rates
+
+### Parse
+
+```{python}
+# | eval: false
+get_rates(
+    root=root,
+    systems=systems,
+    forces=forces_nN,
+    phs=phs,
+    rate_types=rate_types,
+    shears=shears,
+)
+prepare_data()
+```
+
+### Load data
+
+```{python}
+highest_rates = pd.read_csv("./results/highest_rates.csv")
+exp_rates = pd.read_csv("./results/exp_rates.csv")
+sampled_rates = pd.read_csv("./results/sample_rates.csv")
+
+highest_rates["rounded_rate"] = highest_rates["rate"].apply(
+    lambda x: "{:.1e}".format(x)
+)
+```
+
+### Main Homolysis vs. Hydrolysis
+
+```{python}
+query = """
+(force == 0 or (force == 1 and shear) or force in [0, 1] and system == 'Single Peptide')
+and ph == 7.4
+and system in ['Single Peptide', 'Fibril']
+and (reaction == 'homolysis' or (reaction == 'hydrolysis' and rate_type == 'exp'))
+""".replace(
+    "\n", " "
+)
+
+first_force = highest_rates.query(query).sort_values("force").iloc[0]["force"]
+first_system = highest_rates.query(query).sort_values("system").iloc[0]["system"]
+first_panel = highest_rates.query(query).query(
+    "force == @first_force and system == @first_system"
+)
+
+p = (
+    ggplot(
+        sampled_rates.query(query),
+        aes(x="cat", y="rate", color="reaction", fill="reaction"),
+    )
+        + geom_violin()
+        + geom_point(
+            data=exp_rates.query(query),
+            color="black",
+            fill=experiment,
+            show_legend=False,
+        )
+        + geom_text(
+            data=highest_rates.query(query),
+            mapping=aes(label="rounded_rate"),
+            size=7,
+            color="black",
+            va="bottom",
+            ha="center",
+        )
+        + geom_text(
+            data=first_panel,
+            mapping=aes(label="reaction", color="reaction"),
+            y=1e8,
+            size=7,
+            va="bottom",
+            ha="center",
+            fontweight="bold",
+        )
+        + scale_color_manual(
+            values={
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": "black",
+            }
+        )
+        + scale_fill_manual(
+            values={
+                "hydrolysis": experiment_light,
+                "homolysis": "black",
+            }
+        )
+        + labs(x="", y="Rate [1/s] (log10 scale)")
+        + scale_y_log10(minor_breaks=False, breaks=[10**x for x in range(-24, 10, 3)])
+        + theme_matplotlib(rc=rc)
+        + theme(
+            text=element_text(size=7),
+            axis_text_x=element_blank(),
+            axis_ticks_x=element_blank(),
+            legend_position="inside",
+            legend_position_inside=(0.01, 0.99),
+            legend_text=element_text(size=7),
+            legend_title=element_blank(),
+            strip_text=element_text(weight="bold"),
+            strip_background=element_rect(fill="none", color="none"),
+        )
+        + guides(
+            color="none",
+            alpha="none",
+            fill="none",
+        )
+        + coord_cartesian(ylim=(1e-25, 1e9))
+        + facet_grid(
+            cols=["system", "force", "shear"],
+            scales="free_x",
+            labeller=labeller(  # pyright: ignore
+              system=lambda x: str(x).replace("Fibril", "").replace("Single Peptide", ""),
+              force=lambda x: str(x).replace(".0", " nN"),
+              shear=lambda x: str(x).replace("True", "Shear Stress").replace("False", ""),
+              multi_line=True
+             )
+        )
+)
+```
+
+```{python}
+p.show()
+```
+
+```{python}
+p.save(
+    "figures/rates.svg",
+    width=double_column,
+    height=double_column / 3,
+    dpi=DPI,
+    verbose=False,
+)
+```
+
+### SI Hyd experimental vs. theoretical rates
+
+```{python}
+query = """
+True
+and ph == 7.4
+and system in ['Single Peptide']
+and reaction == 'hydrolysis'
+""".replace(
+    "\n", " "
+)
+
+first_force = highest_rates.query(query).sort_values("force").iloc[0]["force"]
+first_system = highest_rates.query(query).sort_values("system").iloc[0]["system"]
+first_panel = highest_rates.query(query).query(
+    # "force == @first_force and shear == @first_shear and system == @first_system"
+    "force == @first_force and system == @first_system"
+)
+
+p = (
+    ggplot(
+        sampled_rates.query(query),
+        aes(x="rate_type", y="rate", color="rate_type", fill="rate_type"),
+    )
+        + geom_violin()
+        + geom_point(
+            data=exp_rates.query(query),
+            color="black",
+            fill=experiment,
+            show_legend=False,
+        )
+        + geom_text(
+            data=highest_rates.query(query),
+            mapping=aes(label="rounded_rate"),
+            size=7,
+            color="black",
+            va="bottom",
+            ha="center",
+        )
+        + labs(x="Heuristic", y="Rate [1/s] (log10 scale)")
+        + theme_matplotlib(rc=rc)
+        + theme(
+            text=element_text(size=7),
+            # axis_text_x=element_blank(),
+            # axis_ticks_x=element_blank(),
+            legend_position="inside",
+            legend_position_inside=(0.01, 0.99),
+            legend_text=element_text(size=7),
+            legend_title=element_blank(),
+            strip_text=element_text(weight="bold"),
+            strip_background=element_rect(fill="none", color="none"),
+        )
+        + guides(
+            color="none",
+            alpha="none",
+            fill="none",
+        )
+        + coord_cartesian(ylim=(1e-13, 1e5))
+        + scale_y_log10(minor_breaks=False, breaks=[10**x for x in range(-24, 10, 3)])
+        + facet_grid(
+            cols=["system", "force", "shear"],
+            scales="free_x",
+            labeller=labeller(  # pyright: ignore
+                              system=lambda x: str(x).replace("Fibril", "").replace("Single Peptide", ""),
+                              force=lambda x: str(x).replace(".0", " nN"),
+                              shear=lambda x: str(x).replace("True", "Shear Stress").replace("False", ""),
+                              multi_line=True
+                              )
+        )
+        + scale_color_manual(
+            values={
+                "exp": HITS_DARKBLUE,
+                "theo": HITS_DARKBLUE,
+            }
+        )
+        + scale_fill_manual(
+            values={
+                "exp": experiment_light,
+                "theo": HITS_DARKBLUE,
+            }
+        )
+)
+```
+
+```{python}
+p.show()
+```
+
+```{python}
+p.save(
+    "figures/si-rates-hyd-theo-vs-exp.svg",
+    width=double_column / 3 * 2,
+    height=double_column / 3,
+)
+```
+
+### SI Fibril equal pulling vs. shear
+
+```{python}
+query = """
+True
+and ph == 7.4
+and system in ['Fibril']
+and (reaction == 'homolysis' or (reaction == 'hydrolysis' and rate_type == 'exp'))
+""".replace(
+    "\n", " "
+)
+
+sampled = sampled_rates.query(query)
+highest = highest_rates.query(query)
+
+shear_order = [True, False]
+for df in [sampled, highest]:
+  # df["shear"] = df["shear"].map({True: "Shear", False: "No Shear"})
+  df["shear"] = pd.Categorical(df["shear"], categories=shear_order, ordered=True)
+
+p = (
+    ggplot(
+        sampled,
+        aes(x='force', y="rate", color="reaction", fill="reaction"),
+    )
+        + geom_violin(aes(alpha="shear"))
+        + geom_text(
+            data=highest,
+            mapping=aes(label="rounded_rate"),
+            size=7,
+            color="black",
+            va="bottom",
+            ha="center",
+        )
+        + scale_color_manual(
+            values={
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": "black",
+            }
+        )
+        + scale_fill_manual(
+            values={
+                "hydrolysis": experiment_light,
+                "homolysis": "black",
+            }
+        )
+        + scale_alpha_manual(
+            values={
+                True: 1,
+                False: 0.6,
+            }
+        )
+        + labs(x="", y="Rate [1/s] (log10 scale)")
+        + scale_y_log10(minor_breaks=False, breaks=[10**x for x in range(-24, 10, 3)])
+        + theme_matplotlib(rc=rc)
+        + theme(
+            text=element_text(size=7),
+            axis_text_x=element_blank(),
+            axis_ticks_x=element_blank(),
+            legend_position="inside",
+            legend_position_inside=(0.01, 0.99),
+            legend_text=element_text(size=7),
+            legend_title=element_blank(),
+            strip_text=element_text(weight="bold"),
+            strip_background=element_rect(fill="none", color="none"),
+        )
+        + guides(
+            color="none",
+            alpha="none",
+            fill="none",
+        )
+        + coord_cartesian(ylim=(1e-25, 1e9))
+        + facet_grid(
+            cols=["force", "shear"],
+            rows=["reaction"],
+            scales="free_x",
+            labeller=labeller(  # pyright: ignore
+                              force=lambda x: str(x) + " nN",
+                              shear=lambda x: str(x).replace("False", "No Shear").replace("True", ""),
+                              multi_line=True,
+                              )
+        )
+)
+```
+
+```{python}
+p.show()
+```
+
+```{python}
+p.save(
+    "figures/si-rates-fibril-eqal-v-shear.svg",
+    width=double_column,
+    height=double_column / 2.5,
+)
+```
+
+### SI Triple vs. Single 0 to 3 nN
+
+```{python}
+# and (reaction == 'homolysis' or (reaction == 'hydrolysis' and rate_type == 'exp'))
+# and ph == 7.4
+query = """
+(force in [0, 1, 2, 3])
+and rate_type == 'exp'
+and system in ['Single Peptide', 'Triple Helix']
+and reaction == 'hydrolysis'
+""".replace(
+    "\n", " "
+)
+
+p = (
+    ggplot(
+        sampled_rates.query(query).sort_values(["force", "shear"], ascending=[True, False]),
+        aes(x='system', y="rate", color="reaction", fill="reaction"),
+    )
+        + geom_violin()
+        + geom_point(
+            data=exp_rates.query(query),
+            color="black",
+            fill=experiment,
+            show_legend=False,
+        )
+        + geom_text(
+            data=highest_rates.query(query),
+            mapping=aes(label="rounded_rate"),
+            size=7,
+            color="black",
+            va="bottom",
+            ha="center",
+        )
+        + scale_color_manual(
+            values={
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": "black",
+            }
+        )
+        + scale_fill_manual(
+            values={
+                "hydrolysis": experiment_light,
+                "homolysis": "black",
+            }
+        )
+        + labs(x="", y="Rate [1/s] (log10 scale)")
+        + scale_y_log10(minor_breaks=False, breaks=[10**x for x in range(-24, 10, 3)])
+        + theme_matplotlib(rc=rc)
+        + theme(
+            text=element_text(size=7),
+            legend_position="inside",
+            legend_position_inside=(0.01, 0.99),
+            legend_text=element_text(size=7),
+            legend_title=element_blank(),
+            strip_text=element_text(weight="bold"),
+            strip_background=element_rect(fill="none", color="none"),
+        )
+        + guides(
+            color="none",
+            alpha="none",
+            fill="none",
+        )
+        + coord_cartesian(ylim=(1e-12, 1e10))
+        + facet_grid(
+            cols=["force"],
+            rows=["ph"],
+            scales="free_x",
+            labeller=labeller(  # pyright: ignore
+                force=lambda x: str(x).replace(".0", " nN"),
+                shear=lambda x: str(x).replace("True", "Shear Stress").replace("False", ""),
+                ph=lambda x: "pH " + str(x),
+                multi_line=True,
+                )
+            )
+)
+```
+
+```{python}
+p.show()
+```
+
+```{python}
+p.save(
+    "figures/si-rates-single-v-triple.svg",
+    width=double_column * 0.85,
+    height=double_column / 3,
+)
+```
+
+## Hydrolysis
+
+### Force Response Curve
+
+direkte force response curve von den Hyrdolyseraten ergibt denke ich noch Sinn im SI.
+
+```{python}
+from kimmdy_hydrolysis.rates import (
+    experimental_reaction_rate_per_s,
+    theoretical_reaction_rate_per_s,
+)
+
+temperature = 300
+
+fs = np.linspace(0, 2, 100)
+ks = [experimental_reaction_rate_per_s(force=f, temperature=temperature) for f in fs]
+ks_theo = [
+    theoretical_reaction_rate_per_s(force=f, temperature=temperature) for f in fs
+]
+df = pd.DataFrame({"force": fs, "rate": ks, "rate_theo": ks_theo})
+```
+
+```{python}
+molten = df.melt(id_vars=["force"], value_vars=["rate", "rate_theo"])
+p = (
+    ggplot(molten, aes(x="force", y="value", color="variable"))
+    + geom_line()
+    + labs(x="Force [nN]", y="Rate [1/s]", color="")
+    + theme(legend_position="inside", legend_position_inside=(0.99, 0.01),
+            legend_box_margin=5, legend_title=element_blank(),
+            legend_text=element_text(size=7),
+            text=element_text(size=7),
+            )
+    + scale_color_manual(
+        values={
+            "rate": experiment,
+            "rate_theo": HITS_DARKBLUE,
+        }
+    )
+    + scale_y_log10(
+        minor_breaks=False,
+        breaks=[10**x for x in range(-9, 3, 1)],
+    )
+)
+```
+
+```{python}
+p.show()
+```
+
+
+```{python}
+p.save(
+    "figures/si-hyd-force-response-exp-v-theo.svg",
+    width=double_column / 3,
+    height=double_column / 3,
+)
+```
+
+## Slow Growth
+
+```{python}
+# Reaction: (1-based top IDs) 12⚡14 f 71637➡12 71638➡14 71639➡14
+path = "./examples/gly-hydrolysis/dist.xvg"
+dist = read_xvg(path, ["time", "C–N", "C–OW", "N–H1", "N–H2"])
+# time jumps back to 0.0 in the concatenated simuluation
+# create a new time column based on the order
+dt = dist["time"][1] - dist["time"][0]
+dist["time"] = np.arange(len(dist)) * dt
+dist = dist.melt(id_vars="time", var_name="dist", value_name="value")
+```
+
+
+```{python}
+p = (
+    ggplot(dist, aes(x="time", y="value", color="dist", group="dist"))
+    + geom_point(alpha=0.1)
+    + geom_smooth(span=0.2, show_legend=False, se=False)
+    + scale_color_manual(
+        values={
+            "C–N": HITS_MAGENTA,
+            "C–OW": HITS_DARKBLUE,
+            "N–H1": HITS_CYAN,
+            "N–H2": HITS_CYAN,
+        }
+    )
+    + labs(x="Time [ps]", y="Distance [nm]")
+    + guides(
+        color=guide_legend(
+            override_aes={
+                "alpha": 1,
+                "size": 4,
+                "linetype": "solid",
+            },
+        )
+    )
+    + theme_matplotlib(rc=rc)
+    + theme(
+        text=element_text(size=7),
+        legend_position="inside",
+        legend_position_inside=(0.99, 0.99),
+        legend_text=element_text(size=7),
+        legend_title=element_blank(),
+        strip_text=element_text(weight="bold"),
+        strip_background=element_rect(fill="none", color="none"),
+    )
+)
+```
+
+```{python}
+p.show()
+```
+
+```{python}
+p.save(
+    "figures/slow-growth.svg",
+    width=single_column,
+    height=single_column * 2/3,
+)
+```
+
+## SASA
+
+```{python}
+# | eval: false
+sasa = get_sasa(root=root, systems=systems, forces=forces_nN, shears=shears)
+```
+
+```{python}
+sasa = pd.read_csv("./results/sasa.csv")
+sasa.ai = sasa.ai.astype(int)
+```
+
+```{python}
+mean_sasa: pd.DataFrame = (
+    sasa.groupby(["system", "force", "ai"]).sasa.mean().reset_index()
+)
+mean_sasa = mean_sasa.merge(
+    sampled_rates.groupby(["system", "force", "ai"]).first(),
+    on=["system", "force", "ai"],
+    how="left",
+)
+
+p = (
+    ggplot(mean_sasa, aes(x="system", y="sasa"))
+    + geom_violin()
+    + geom_sina(aes(color="n", group="system"))
+    + annotate(
+        geom="crossbar",
+        x="single",
+        y=MAX_SASA,
+        ymin=MAX_SASA,
+        ymax=MAX_SASA,
+        color="red",
+        size=0.4,
+        width=0.3,
+    )
+    + annotate(
+        geom="text",
+        x="single",
+        y=MAX_SASA,
+        label=f"max SASA: {MAX_SASA:.2f} $A^2$",
+        color="red",
+        size=8,
+        ha="center",
+        va="bottom",
+    )
+    + facet_grid(cols="force")
+    + theme_matplotlib(rc=rc)
+    + theme(axis_text_x=element_text(angle=45, hjust=1))
+    + guides(color="none", fill="none")
+    + labs(x="", y="SASA [$A^2$]", subtitle="force [nN]")
+)
+
+# p.save('./figures/sasa.png')
+p.show()
+```
+
+```{python}
+# | eval: false
+top = Topology.from_path(root / "examples/collagen-hydrolysis/assets/collagen.top")
+```
+
+```{python}
+collagen_gro = read_gro(root / "examples/collagen-hydrolysis/assets/nvt.gro")
+atoms = [
+    atom for atom in collagen_gro.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
+]
+```
+
+```{python}
+col_rates = (
+    sampled_rates.query(
+        "system == 'Fibril' & force == 0 & ph == 7.4 & reaction == 'hydrolysis' & rate_type == 'theo'"
+    )
+    .groupby(["ai"])
+    .agg({"rate": "mean"})
+    .reset_index()
+)
+```
+
+add the coordinates grom the gro file to the rates dataframe
+
+```{python}
+for i, row in col_rates.iterrows():
+    ai = row["ai"]
+    atom = atoms[int(ai) - 1]
+    col_rates.at[i, "x"] = atom.position[0]
+    col_rates.at[i, "y"] = atom.position[1]
+    col_rates.at[i, "z"] = atom.position[2]
+```
+
+plot in 3d colored by rate
+
+```{python}
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+ax.scatter(
+    col_rates["x"],
+    col_rates["y"],
+    col_rates["z"],
+    c=col_rates["rate"],
+    cmap="viridis",
+)
+ax.set_title("Collagen rates at 0 nN")
+plt.show()
+```
+
+
+```{python}
+p = (
+    ggplot(
+        col_rates,
+        aes(x="x", y="y", fill="rate"),
+    )
+    + geom_point()
+)
+p.show()
+```
+
+
+```{python}
+col_sasa = (
+    sasa.query("system == 'collagen'")
+    .groupby(["ai", "force"])
+    .agg({"sasa": "mean"})
+    .reset_index()
+)
+for i, row in col_sasa.iterrows():
+    ai = row["ai"]
+    atom = atoms[int(ai) - 1]
+    col_sasa.at[i, "x"] = atom.position[0]
+    col_sasa.at[i, "y"] = atom.position[1]
+    col_sasa.at[i, "z"] = atom.position[2]
+```
+
+```{python}
+p = (
+    ggplot(
+        col_sasa.query("y < 9.5 & y > 7.9"),
+        aes(x="z", y="x", fill="sasa"),
+    )
+    + geom_point()
+    + facet_grid(rows="force")
+)
+p.show()
+```
+
+slices
+
+```{python}
+p = (
+    ggplot(
+        col_sasa.query("z < 50 & z > 40"),
+        aes(x="x", y="y", fill="sasa"),
+    )
+    + geom_point()
+    + facet_grid(rows="force")
+)
+p.show()
+```
+
+

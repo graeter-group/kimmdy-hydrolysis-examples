@@ -1,0 +1,362 @@
+---
+title: Explore the hydrolysis reaction
+execute:
+  eval: false
+---
+
+# wip
+
+## setup
+
+```{python}
+from plotnine import * # pyright: ignore
+import pandas as pd
+from kimmdy.parsing import read_distances_dat, read_plumed, read_top
+from kimmdy.topology.topology import Topology
+from kimmdy_hydrolysis.utils import get_peptide_bonds_from_top
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import os
+from pathlib import Path
+
+root = os.getcwd()
+example = f"{root}/examples/triplehelix-hydrolysis"
+
+theme_set(theme_minimal())
+
+plt.ion()
+```
+
+### analyse bond lengths
+
+```{python}
+system = 'triple'
+run = f"{example}/run_eq-{system}_0nN"
+distances = read_distances_dat(Path(f"{run}/2_pull/distances.dat"))
+top = Topology(read_top(Path(f"{run}/0_setup/{system}.top"), ffdir=Path(f"{example}/amber99sb-star-ildnp.ff")))
+bonds = get_peptide_bonds_from_top(top)
+plumed = read_plumed(Path(f"{run}/0_setup/{system}-plumed.dat"))
+
+bond_to_plumed_id = {}
+for k, v in plumed["labeled_action"].items():
+  if v["keyword"] != "DISTANCE":
+    continue
+  atoms = v["atoms"]
+  bondkey = tuple(sorted(atoms, key=int))
+  bond_to_plumed_id[bondkey] = k
+
+bond_distances = {}
+for bondkey, plumed_id in bond_to_plumed_id.items():
+  bond_distances[bondkey] = distances[plumed_id]
+```
+
+```{python}
+bond = bonds[0]
+key = (bonds[0].ai, bonds[0].aj)
+bondtype = top.ff.bondtypes.get((top.atoms[bond.ai].type, top.atoms[bond.aj].type))
+r0 = float(bondtype.c0) # type: ignore
+rs: list[float] = bond_distances[key]
+
+df = pd.DataFrame({
+  'r': rs,
+})
+df['r0'] = r0
+df['key'] = str(key)
+df.to_csv(f"./results/example-bond-lengths.csv")
+
+mean = float(np.mean(rs))
+# find the mode of the distribution
+# by binning the data and finding the bin with the highest count
+hist, bin_edges = np.histogram(rs, bins=70)
+mode = bin_edges[np.argmax(hist)]
+
+# as bars
+plt.bar(bin_edges[:-1], hist, width=bin_edges[1]-bin_edges[0])
+# highlight the mean and mode
+plt.axvline(mean, color='black', linestyle='dashed', linewidth=1)
+plt.axvline(mode, color='orange', linestyle='dashed', linewidth=1)
+plt.axvline(r0, color='red', linestyle='dashed', linewidth=1)
+# add labels to the lines
+
+plt.annotate(f"mean: {mean:.4f}", (mean, 0), textcoords="offset points", xytext=(0, 100), ha='center', color='black')
+plt.annotate(f"mode: {mode:.4f}", (mode, 0), textcoords="offset points", xytext=(0, 80), ha='center', color='orange')
+plt.annotate(f"r0: {r0:.4f}", (r0, 0), textcoords="offset points", xytext=(0, 60), ha='center', color='red')
+
+plt.show()
+```
+
+
+```{python}
+bondstats = []
+for bond in bonds:
+  key = (bond.ai, bond.aj)
+  bondtype = top.ff.bondtypes.get((top.atoms[bond.ai].type, top.atoms[bond.aj].type))
+  r0 = float(bondtype.c0) # type: ignore
+  rs: list[float] = bond_distances[key]
+  mean = float(np.mean(rs))
+  hist, bin_edges = np.histogram(rs, bins=70)
+  mode = bin_edges[np.argmax(hist)]
+  bondstats.append({
+    'key': key,
+    'mean': mean,
+    'mode': mode,
+    'r0': r0,
+    'mean-r0': mean - r0,
+    'mode-r0': mode - r0,
+  })
+
+df = pd.DataFrame(bondstats)
+df['force'] = 0
+```
+
+
+```{python}
+p = (
+ggplot(df, aes(x='mean-r0')) + geom_histogram(bins=70, fill='black')
+)
+p.show()
+```
+
+```{python}
+p = (
+ggplot(df, aes(x='mode-r0')) + geom_histogram(bins=70, fill='orange')
+)
+p.show()
+```
+
+```{python}
+comp = df[['mean-r0', 'mode-r0']].melt()
+```
+
+
+```{python}
+p = (
+  ggplot(comp, aes(x='value', color='variable', fill='variable')) + geom_histogram(bins=50, position=position_identity(), alpha=0.5) +
+  scale_color_manual(values=['black', 'orange']) +
+  scale_fill_manual(values=['black', 'orange'])
+)
+p.show()
+```
+
+## Bond lengths under force
+
+```{python}
+system = 'triple'
+run = f"{example}/run_eq-{system}_3nN"
+distances = read_distances_dat(Path(f"{run}/2_pull/distances.dat"))
+top = Topology(read_top(Path(f"{run}/0_setup/{system}.top"), ffdir=Path(f"{example}/amber99sb-star-ildnp.ff")))
+bonds = get_peptide_bonds_from_top(top)
+plumed = read_plumed(Path(f"{run}/0_setup/{system}-plumed.dat"))
+
+bond_to_plumed_id = {}
+for k, v in plumed["labeled_action"].items():
+  if v["keyword"] != "DISTANCE":
+    continue
+  atoms = v["atoms"]
+  bondkey = tuple(sorted(atoms, key=int))
+  bond_to_plumed_id[bondkey] = k
+
+bond_distances = {}
+for bondkey, plumed_id in bond_to_plumed_id.items():
+  bond_distances[bondkey] = distances[plumed_id]
+```
+
+
+```{python}
+bond = bonds[0]
+key = (bonds[0].ai, bonds[0].aj)
+bondtype = top.ff.bondtypes.get((top.atoms[bond.ai].type, top.atoms[bond.aj].type))
+r0 = float(bondtype.c0) # type: ignore
+rs: list[float] = bond_distances[key]
+
+mean = float(np.mean(rs))
+# find the mode of the distribution
+# by binning the data and finding the bin with the highest count
+hist, bin_edges = np.histogram(rs, bins=70)
+mode = bin_edges[np.argmax(hist)]
+
+# as bars
+plt.bar(bin_edges[:-1], hist, width=bin_edges[1]-bin_edges[0])
+# highlight the mean and mode
+plt.axvline(mean, color='black', linestyle='dashed', linewidth=1)
+plt.axvline(mode, color='orange', linestyle='dashed', linewidth=1)
+plt.axvline(r0, color='red', linestyle='dashed', linewidth=1)
+# add labels to the lines
+
+plt.annotate(f"mean: {mean:.4f}", (mean, 0), textcoords="offset points", xytext=(0, 100), ha='center', color='black')
+plt.annotate(f"mode: {mode:.4f}", (mode, 0), textcoords="offset points", xytext=(0, 80), ha='center', color='orange')
+plt.annotate(f"r0: {r0:.4f}", (r0, 0), textcoords="offset points", xytext=(0, 60), ha='center', color='red')
+
+plt.show()
+```
+
+
+```{python}
+bondstats = []
+for bond in bonds:
+  key = (bond.ai, bond.aj)
+  bondtype = top.ff.bondtypes.get((top.atoms[bond.ai].type, top.atoms[bond.aj].type))
+  r0 = float(bondtype.c0) # type: ignore
+  rs: list[float] = bond_distances[key]
+  mean = float(np.mean(rs))
+  hist, bin_edges = np.histogram(rs, bins=70)
+  mode = bin_edges[np.argmax(hist)]
+  bondstats.append({
+    'key': key,
+    'mean': mean,
+    'mode': mode,
+    'r0': r0,
+    'mean-r0': mean - r0,
+    'mode-r0': mode - r0,
+  })
+
+tmpdf = pd.DataFrame(bondstats)
+tmpdf['force'] = 3
+df = pd.concat([df, tmpdf]) 
+comp = df[['mean-r0', 'mode-r0', 'force', 'key']].melt(id_vars=['force', 'key'])
+```
+
+
+```{python}
+p = (
+ggplot(df.query('force == 3'), aes(x='mean-r0')) + geom_histogram(bins=70, fill='black')
+)
+p.show()
+```
+
+```{python}
+p = (
+ggplot(df.query('force == 3'), aes(x='mode-r0')) + geom_histogram(bins=70, fill='orange')
+)
+p.show()
+```
+
+```{python}
+p = (
+  ggplot(comp.query('force == 3'), aes(x='value', color='variable', fill='variable')) + geom_histogram(bins=50, position=position_identity(), alpha=0.5) +
+  scale_color_manual(values=['black', 'orange']) +
+  scale_fill_manual(values=['black', 'orange'])
+)
+p.show()
+```
+
+### Compare eq and 3nN
+
+
+# old
+
+
+```{python}
+data = {}
+for bond in bonds:
+  ai = top.atoms[bond.ai]
+  aj = top.atoms[bond.aj]
+  k = (bond.ai, bond.aj)
+  bondtype = top.ff.bondtypes.get((ai.type, aj.type))
+  ds = bond_distances[k]
+  data[k] = ds
+```
+
+
+```{python}
+df = pd.DataFrame(data)
+```
+
+```{python}
+df = df.melt()
+df = df.rename(columns={'variable_0': 'i', 'variable_1': 'j'})
+df['ij'] = df['i'].astype(str) + "-" + df['j'].astype(str)
+df['cumsum'] = df.groupby(['i', 'j']).value.cumsum()
+df['t'] = df.groupby(['i', 'j']).cumcount()
+df['cummean'] = df['cumsum'] / df['t']
+```
+
+
+```{python}
+df
+```
+
+```{python}
+p = (
+  ggplot(df,aes(x='t', y='value', color='ij'))
+  # + geom_point()
+  + geom_line(aes(y='cummean'))
+  # + facet_wrap('ij')
+  + theme_matplotlib()
+  + xlim(0, 100)
+)
+p.show()
+```
+
+
+```{python}
+stats
+```
+
+
+```{python}
+ds = []
+for s in stats.values():
+  d = s["delta"]
+  ds.append(d)
+
+m = np.mean(ds)
+print(np.mean(ds), np.std(ds), len(ds))
+```
+
+
+```{python}
+plt.hist(ds, bins=40)
+# plt.axvline(0, color='k', linestyle='dashed', linewidth=1)
+plt.axvline(m, color='k', linestyle='dashed', linewidth=1)
+plt.title("Average bond length deviation in 2ns at 0nN across 132 peptide bonds")
+
+plt.show()
+```
+
+
+```{python}
+for k,s in stats.items():
+  bond = top.bonds[k]
+  ai = top.atoms[bond.ai]
+  aj = top.atoms[bond.aj]
+  res_i = ai.residue
+  res_j = aj.residue
+  stats[k]["residue_i"] = res_i
+  stats[k]["residue_j"] = res_j
+
+df = pd.DataFrame(stats).T
+cols = ['mean', 'std', 'delta']
+df[cols] = df[cols].apply(pd.to_numeric)
+df['pair'] = df['residue_i'] + "-" + df['residue_j']
+df['pro_in_j'] = (df['residue_j'] == 'PRO') | (df['residue_j'] == 'HYP')
+```
+
+
+```{python}
+p = (
+  ggplot(df, aes(x="delta", fill="residue_j")) +
+    geom_histogram() +
+    theme_minimal()
+)
+print(p)
+```
+
+
+```{python}
+p = (
+  ggplot(df, aes(x="delta", fill="pro_in_j")) +
+    geom_histogram() +
+    theme_minimal()
+)
+print(p)
+```
+
+
+```{python}
+df.groupby("pro_in_j")["delta"].mean()
+```
+
+
+

@@ -1,0 +1,30 @@
+name: run_prod
+gromacs_alias: 'gmx'
+topology:
+  reactive:
+    include: "SOL"
+ndx: 'index.ndx'
+top: 'topol.top'
+gro: npt.gro
+mds:
+  eq:
+    mdp: 'md.mdp'
+  relax:
+    mdp: 'relax.mdp'
+changer:
+  topology:
+    parameterization: grappa
+  coordinates:
+    md: 'relax'
+    slow_growth: full
+parameterize_at_setup: false
+reactions:
+  hydrolysis:
+    kmc: rfkmc
+    step: 1
+    cutoff: 5
+    external_force: 0
+sequence:
+  - eq
+  - reactions
+  - eq

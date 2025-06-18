@@ -1,0 +1,8 @@
+key, ai, aj, c, n
+0, 5, 5, ACE, GLY
+1, 7, 7, GLY, GLY
+2, 9, 9, GLY, GLY
+3, 12, 12, GLY, GLY
+4, 14, 14, GLY, GLY
+5, 16, 16, GLY, GLY
+6, 19, 19, GLY, NME

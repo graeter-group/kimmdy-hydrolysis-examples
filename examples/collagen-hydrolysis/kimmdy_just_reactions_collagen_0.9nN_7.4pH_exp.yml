@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/graeter-group/kimmdy/refs/heads/main/src/kimmdy/kimmdy-yaml-schema.json
+name: 'run_react_collagen_0.9nN_7.4pH_exp'
+gromacs_alias: 'gmx'
+gmx_mdrun_flags: -maxh 24 -dlb
+max_hours: 23
+restart: true
+just_sample: true
+slurm:
+  N: 1
+  ntasks_per_node: 40
+  mincpus: 40
+  cpus_per_task: 1
+  gpus: 2
+  runcmd: sbatch
+  partition: 'cascade.p'
+# even though we have hydrolysis, in the just_sample
+# mode the reaction never gets executed,
+# so we don't need water in the reactive moleculetype
+# topology:
+#   reactive:
+#     include: "SOL"
+ndx: './assets/collagen.ndx'
+top: './assets/collagen.top'
+gro: 'run_eq_collagen_0.9nN/1_eq/eq.gro'
+xtc: 'run_eq_collagen_0.9nN/2_pull/pull.xtc'
+trr: 'run_eq_collagen_0.9nN/2_pull/pull.trr'
+tpr: 'run_eq_collagen_0.9nN/2_pull/pull.tpr'
+plumed: 'run_eq_collagen_0.9nN/0_setup/collagen_plumed.dat'
+edissoc: ./assets/edissoc.dat
+mds:
+  eq:
+    mdp: 'eq_collagen_0.9nN.mdp'
+  pull:
+    mdp: 'pull_collagen_0.9nN.mdp'
+    use_plumed: true
+changer:
+  topology:
+    parameterization: basic
+  coordinates: {}
+parameterize_at_setup: false
+reactions:
+  homolysis:
+    recompute_bondstats: false
+    arrhenius_equation:
+      frequency_factor: 0.288
+      temperature: 300
+  hydrolysis:
+    step: 10
+    cutoff: 6
+    ph_value: 7.4
+    bondstats_at_0: ./assets/collagen_bondstats.csv
+    temperature: 300
+    theoretical_rates:
+      use: False
+sequence:
+  - reactions

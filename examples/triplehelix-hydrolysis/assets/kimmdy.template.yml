@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/graeter-group/kimmdy/refs/heads/main/src/kimmdy/kimmdy-yaml-schema.json
+name: '${name}'
+gromacs_alias: 'gmx'
+gmx_mdrun_flags: -maxh 24 -dlb yes -nt 10
+restart: true
+topology:
+  reactive:
+    include: "SOL"
+ndx: '${system}.ndx'
+top: '${system}.top'
+
+gro: '${system}-npt.gro'
+plumed: ${system}-plumed.dat
+
+mds:
+  eq:
+    mdp: './eq-${system}-${force}nN.mdp'
+  relax:
+    mdp: './relax-${system}-${force}nN.mdp'
+  pull:
+    mdp: './pull-${system}-${force}nN.mdp'
+    use_plumed: true
+changer:
+  topology:
+    parameterization: grappa
+  coordinates:
+    slow_growth: "true"
+    md: relax
+parameterize_at_setup: false
+reactions:
+  hydrolysis:
+    step: 1
+    cutoff: 6
+    ph_value: ${ph}
+  homolysis:
+    edis: ./assets/edissoc.dat
+    itp: ./assets/ffbonded.itp
+    arrhenius_equation:
+      frequency_factor: 0.288
+      temperature: ${temperature}
+sequence:
+  - eq
+  - pull
+  - reactions

@@ -1,0 +1,242 @@
+---
+title: wip
+execute:
+  echo: true
+  eval: false
+---
+
+```{python}
+from kimmdy.plugin_utils import calculate_beta, calculate_forces
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+from kimmdy.plugins import discover_plugins
+from plotnine import *  # pyright: ignore
+from src.utils import read_xvg
+from kimmdy.plugin_utils import calculate_forces
+import pandas as pd
+import os
+
+discover_plugins()
+root = os.getcwd()
+```
+# Setup
+
+```{python}
+def morse(r, D, beta, re=0.5):
+    return D * (1 - np.exp(-beta * (r - re))) ** 2
+```
+
+# Morse potential
+
+Plot force response curve for the CA C bond
+
+```{python}
+import matplotlib as mpl
+from matplotlib.colors  import to_hex
+cmap = mpl.colormaps['tab10']
+hex = [to_hex(cmap(i)) for i in range(10)]
+b0 = 0.151
+kb = 265265.6
+edis = 341
+beta = calculate_beta(kb=kb, edis=edis)
+
+ds = np.linspace(0.15, 0.4, 1000)
+fs_max = calculate_forces(ds=ds, b0=b0, edis=edis, beta=beta)
+fs_raw = calculate_forces(ds=ds, b0=b0, edis=edis, beta=beta, max_f=False)
+df = pd.DataFrame({"ds": ds, "fs_max": fs_max, "fs_raw": fs_raw})
+df = df.melt(id_vars=["ds"])
+
+p = (
+    ggplot(data=df, mapping=aes(x='ds', y='value', color='variable'))
+    + geom_line()
+    + labs(x="r", y="F(r)", title="Force response curve")
+    + theme_matplotlib()
+    + scale_color_manual(values=hex)
+)
+p.show()
+```
+
+# Forces
+
+# Shear pulling distances
+
+```{python}
+dir = Path('/hits/fast/mbm/buhrjk/phd/kimmdy-examples/examples/collagen-hydrolysis/run_eq_collagen_0.8nN_shear/1_eq')
+path = dir / 'eq_pullx.xvg'
+```
+
+```{python}
+pullx = read_xvg(path)
+pullx = pullx.loc[:, ~pullx.columns.str.contains('ref|dZ')]
+pullx = pullx.melt(id_vars=['Time (ps)'])
+```
+
+```{python}
+p = (
+    ggplot(data=pullx, mapping=aes(x='Time (ps)', y='value', color='variable'))
+    + geom_line()
+    + labs(x="Time (ps)", y="Pulling distance (nm)", title="Pulling distance")
+    + theme_matplotlib()
+)
+p.show()
+```
+
+2 ns is still plenty of equilibration!
+
+# Gaussians
+
+```{python}
+average_force = 1806 # = 602 * 3 in gmx units per group
+average_force = 3 # in nN
+average_force = 1 # in nN per single peptide
+std_dev = average_force / 3.0
+x = np.linspace(0, average_force + 3 * std_dev, 1000)
+y = (
+    1
+    / (std_dev * np.sqrt(2 * np.pi))
+    * np.exp(-0.5 * ((x - average_force) / std_dev) ** 2)
+)
+plt.plot(x, y)
+plt.show()
+```
+
+
+
+## Pure
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.widgets import Button, Slider
+
+
+rs = np.linspace(0, 3, 1000)
+
+init_D = 300
+init_beta = 20
+init_re = 0.15
+
+fig, ax = plt.subplots()
+(line,) = ax.plot(rs, morse(rs, init_D, init_beta, init_re), lw=2)
+y_max = morse(r=3, D=init_D, beta=init_beta, re=init_re)
+ax.set_ylim(-10, y_max + 20)
+ax.set_ylabel("V(r)")
+ax.set_xlabel("r")
+
+fig.subplots_adjust(left=0.25, bottom=0.5)
+
+axD = fig.add_axes([0.1, 0.25, 0.0225, 0.63])
+D_slider = Slider(
+    ax=axD, label="D", valmin=0, valmax=700, valinit=init_D, orientation="vertical"
+)
+
+axbeta = fig.add_axes([0.25, 0.1, 0.65, 0.03])
+beta_slider = Slider(
+    ax=axbeta,
+    label="beta",
+    valmin=0,
+    valmax=50,
+    valinit=init_beta,
+)
+axre = fig.add_axes([0.25, 0.2, 0.65, 0.03])
+re_slider = Slider(
+    ax=axre,
+    label="re",
+    valmin=0,
+    valmax=3,
+    valinit=init_re,
+)
+
+
+def update(val):
+    line.set_ydata(morse(r=rs, D=D_slider.val, beta=beta_slider.val, re=re_slider.val))
+    y_max = morse(r=3, D=init_D, beta=init_beta, re=init_re)
+    ax.set_ylim(-10, y_max + 20)
+    fig.canvas.draw_idle()
+
+
+D_slider.on_changed(update)
+beta_slider.on_changed(update)
+re_slider.on_changed(update)
+
+resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
+button = Button(resetax, "Reset", hovercolor="0.975")
+
+
+def reset(event):
+    D_slider.reset()
+    beta_slider.reset()
+    re_slider.reset()
+
+
+button.on_clicked(reset)
+
+plt.show()
+```
+
+# Lennard-Jones potential
+
+```{python}
+def lj(r, sigma, epsilon):
+    return 4 * epsilon * ((sigma / r) ** 12 - (sigma / r) ** 6)
+
+
+rs = np.linspace(0, 3, 1000)
+
+init_sigma = 0.28
+init_epsilon = 0.21
+
+fig, ax = plt.subplots()
+(line,) = ax.plot(rs, lj(rs, init_sigma, init_epsilon), lw=2)
+y_max = lj(r=3, sigma=init_sigma, epsilon=init_epsilon)
+ax.set_ylim(-3, y_max + 3)
+ax.set_ylabel("V(r)")
+ax.set_xlabel("r")
+
+fig.subplots_adjust(left=0.25, bottom=0.25)
+
+axsigma = fig.add_axes([0.1, 0.25, 0.0225, 0.63])
+sigma_slider = Slider(
+    ax=axsigma,
+    label="sigma",
+    valmin=0.01,
+    valmax=1,
+    valinit=init_sigma,
+    orientation="vertical",
+)
+
+axepsilon = fig.add_axes([0.25, 0.1, 0.65, 0.03])
+epsilon_slider = Slider(
+    ax=axepsilon,
+    label="epsilon",
+    valmin=0.01,
+    valmax=1,
+    valinit=init_epsilon,
+)
+
+
+def update(val):
+    line.set_ydata(lj(r=rs, sigma=sigma_slider.val, epsilon=epsilon_slider.val))
+    y_max = lj(r=3, sigma=init_sigma, epsilon=init_epsilon)
+    ax.set_ylim(-3, y_max + 3)
+    fig.canvas.draw_idle()
+
+
+sigma_slider.on_changed(update)
+epsilon_slider.on_changed(update)
+
+resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
+button = Button(resetax, "Reset", hovercolor="0.975")
+
+
+def reset(event):
+    sigma_slider.reset()
+    epsilon_slider.reset()
+
+
+button.on_clicked(reset)
+
+plt.show()
+```
+

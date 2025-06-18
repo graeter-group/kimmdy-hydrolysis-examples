@@ -1,0 +1,28 @@
+pip
+
+grappa-ff --index-url https://download.pytorch.org/whl/cpu
+kimmdy-grappa
+-e ./deps/kimmdy[reactions,analysis,dev]
+-e ./deps/kimmdy-hydrolysis/
+-e ./deps/kimmdy-reactions/
+-e ./deps/kimmdy_paper_theme/
+-e ./deps/kimmdy-binding
+
+ipython
+jupyter
+matplotlib
+seaborn
+plotnine
+shiny
+htmltools
+pynvim
+jupyter_client
+cairosvg
+plotly
+kaleido
+pnglatex
+pyperclip
+snakeviz
+pandas
+pyarrow
+polars

@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/graeter-group/kimmdy/refs/heads/main/src/kimmdy/kimmdy-yaml-schema.json
+name: 'run_eq_${system}_${force}nN'
+gmx_mdrun_flags: ${md_flags}
+max_hours: ${max_hours}
+restart: true
+slurm:
+  N: 1
+  ntasks_per_node: 40
+  mincpus: 40
+  cpus_per_task: 1
+  gpus: 2
+  runcmd: sbatch
+  partition: 'cascade.p'
+# no reactions, so we don't need to load
+# water into the reactive part of topology
+# topology:
+#   reactive:
+#     include: "SOL"
+ndx: './assets/${system}.ndx'
+top: './assets/${system}.top'
+gro: './assets/${gro_start}.gro'
+plumed: './assets/${system}_plumed.dat'
+mds:
+  eq:
+    mdp: './eq_${system}_${force}nN.mdp'
+  pull:
+    mdp: './pull_${system}_${force}nN.mdp'
+    use_plumed: true
+changer:
+  topology:
+    parameterization: basic
+  coordinates: {}
+parameterize_at_setup: false
+sequence:
+  - eq
+  - pull

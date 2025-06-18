@@ -1,0 +1,287 @@
+---
+title: Run KIMMDY simulations
+execute:
+  eval: false
+---
+
+# Notes
+
+- PLUMED is incompatible with thread-MPI (PLUMED exits with an error when more than 1 thread-MPI rank is used)
+- In the long run there may be better options for the hydrolysis and homolysis plugins
+  than PLUMED, because it drastically decreasses performance.
+  E.g. collagen system no plumed: 4ns per day, with plumed: 0.66 ns per day.
+
+# Setup
+
+## Environment
+
+Execute this before opening the notebook in you editor,
+running the notebook, or code chunks from it:
+
+```bash
+. ./setup.sh
+```
+
+## Imports
+
+```{python}
+import logging
+from plotnine import *  # pyright: ignore
+from kimmdy.plugins import discover_plugins
+from src.utils import (
+    fill_templates,
+    gather_0_dists_and_forces,
+    pushd,
+    slurm_dispatch,
+    write_topology_info,
+)
+from kimmdy.cmd import kimmdy_run
+from pathlib import Path
+
+logging.shutdown()
+
+discover_plugins()
+
+root = Path().resolve()
+use_cluster = True
+```
+
+# Triplehelix Simulations
+
+```{python}
+example = root / "examples/triplehelix-hydrolysis"
+systems = ["single", "triple"]
+forces_nN = [0, 1, 2, 3]
+phs = [7, 7.4, 12]
+rate_types = ["theo", "exp"]
+```
+
+## Gather Topology Information
+
+Write information about backbone bonds and generate a plumed.dat input files
+
+```{python}
+for system in systems:
+    write_topology_info(example=example, system=system)
+```
+
+## Generate KIMMDY configs and mdp files
+
+```{python}
+fill_templates(
+    example=example,
+    systems=systems,
+    forces_nN=forces_nN,
+    phs=phs,
+    use_cluster=use_cluster,
+    rate_types=rate_types,
+)
+```
+
+## Run Equilibration and Sampling Simulations
+
+```{python}
+# | eval: false
+with pushd(example):
+    for system in systems:
+        for force in forces_nN:
+            name = f"eq_{system}_{force}nN"
+            if use_cluster:
+                kimmdy_run(Path(f"kimmdy_{name}.yml"), generate_jobscript=True)
+                slurm_dispatch(example, f"run_{name}")
+            else:
+                kimmdy_run(Path(f"kimmdy_{name}.yml"))
+```
+
+## Gather Bond Lengths during Sampling at 0nN
+
+```{python}
+# | eval: false
+for system in systems:
+    gather_0_dists_and_forces(example, system)
+```
+
+## Query Reactions using Trajectories of the Sampling Simulations
+
+```{python}
+use_cluster_for_reactions = False
+fill_templates(
+    example=example,
+    systems=systems,
+    forces_nN=forces_nN,
+    phs=phs,
+    rate_types=rate_types,
+    use_cluster=use_cluster_for_reactions,
+)
+with pushd(example):
+    for system in systems:
+        for force in forces_nN:
+            for ph in phs:
+                for rate_type in rate_types:
+                    name = f"{system}_{force}nN_{ph}pH_{rate_type}"
+                    if use_cluster_for_reactions:
+                        kimmdy_run(
+                            Path(f"kimmdy_just_reactions_{name}.yml"),
+                            generate_jobscript=True,
+                        )
+                        slurm_dispatch(example, f"run_react_{name}")
+                    else:
+                        kimmdy_run(Path(f"kimmdy_just_reactions_{name}.yml"))
+```
+
+# Collagen Fibril Simulations
+
+`/hits/fast/mbm/hartmaec/workdir/collagen_HAT/trivalent/md_files_dedop/`
+
+```{python}
+example = root / "examples/collagen-hydrolysis"
+systems = ["collagen"]
+system = systems[0]
+forces_nN = [0, 1]
+phs = [7.4]
+shears = ["", "_shear"]
+ph = phs[0]
+rate_types = ["theo", "exp"]
+```
+
+```{python}
+write_topology_info(example, "collagen")
+```
+
+```{python}
+fill_templates(
+    example=example,
+    systems=systems,
+    forces_nN=forces_nN,
+    phs=phs,
+    rate_types=rate_types,
+    use_cluster=use_cluster,
+    shears=shears,
+)
+```
+
+```{python}
+with pushd(example):
+    for f in forces_nN:
+        kimmdy_run(Path(f"kimmdy_eq_{system}_{f}nN.yml"), generate_jobscript=True)
+        slurm_dispatch(example, f"run_eq_{system}_{f}nN")
+```
+
+With shearing:
+
+```{python}
+# forces_shear = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1]
+forces_shear = [0.7, 0.8, 0.9]
+system = "collagen"
+fill_templates(
+    example=example,
+    systems=systems,
+    forces_nN=forces_shear,
+    phs=phs,
+    rate_types=rate_types,
+    use_cluster=use_cluster,
+    shears=shears,
+)
+with pushd(example):
+    for f in forces_shear:
+        kimmdy_run(Path(f"kimmdy_eq_{system}_{f}nN_shear.yml"), generate_jobscript=True)
+        slurm_dispatch(example, f"run_eq_{system}_{f}nN_shear")
+```
+
+## Bond lengths in Equilibrium at 0nN
+
+Using every 10th distance due to the big system.
+(nst of each distance = stride * STRIDE in plumed.dat)
+
+```{python}
+# | eval: false
+# instead run: ipython ./scripts/collect_collagen_bond_stats.py
+# on HPC node
+gather_0_dists_and_forces(example, system, dt=0)
+```
+
+## Query Reactions using Trajectories of the Sampling Simulations
+
+```{python}
+use_cluster_for_reactions = True
+
+example = root / "examples/collagen-hydrolysis"
+systems = ["collagen"]
+system = systems[0]
+# forces_nN = [0, 1]
+forces_nN = [1]
+rate_types = ["theo", "exp"]
+# shears = ["", "_shear"]
+shears = ["_shear"]
+phs = [7.4]
+ph = phs[0]
+
+fill_templates(
+    example=example,
+    systems=systems,
+    forces_nN=forces_nN,
+    phs=phs,
+    rate_types=rate_types,
+    use_cluster=use_cluster_for_reactions,
+    shears=shears,
+)
+
+with pushd(example):
+    for force in forces_nN:
+        for rate_type in rate_types:
+            for shear in shears:
+                if shear == "" and force == 0:
+                    continue
+                name = f"{system}_{force}nN_{ph}pH_{rate_type}{shear}"
+                if use_cluster_for_reactions:
+                    kimmdy_run(
+                        Path(f"kimmdy_just_reactions_{name}.yml"),
+                        generate_jobscript=True,
+                    )
+                    slurm_dispatch(example, f"run_react_{name}")
+                else:
+                    kimmdy_run(Path(f"kimmdy_just_reactions_{name}.yml"))
+```
+
+
+```{python}
+system = "collagen"
+use_cluster_for_reactions = True
+
+example = root / "examples/collagen-hydrolysis"
+systems = ["collagen"]
+system = systems[0]
+forces_shear = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+rate_types = ["theo", "exp"]
+shears = ["_shear"]
+phs = [7.4]
+ph = phs[0]
+
+fill_templates(
+    example=example,
+    systems=systems,
+    forces_nN=forces_shear,
+    phs=phs,
+    rate_types=rate_types,
+    use_cluster=use_cluster_for_reactions,
+    shears=shears,
+)
+
+with pushd(example):
+    for force in forces_shear:
+        for rate_type in rate_types:
+            for shear in shears:
+                if shear == "" and force == 0:
+                    continue
+                name = f"{system}_{force}nN_{ph}pH_{rate_type}{shear}"
+                if use_cluster_for_reactions:
+                    kimmdy_run(
+                        Path(f"kimmdy_just_reactions_{name}.yml"),
+                        generate_jobscript=True,
+                    )
+                    slurm_dispatch(example, f"run_react_{name}")
+                else:
+                    kimmdy_run(Path(f"kimmdy_just_reactions_{name}.yml"))
+```
+
+

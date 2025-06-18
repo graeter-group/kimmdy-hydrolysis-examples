@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/graeter-group/kimmdy/refs/heads/main/src/kimmdy/kimmdy-yaml-schema.json
+name: 'run_eq_single_2nN'
+gmx_mdrun_flags: -ntmpi 1 -nt 10 -dlb yes --gpu_id 0
+max_hours: 0
+restart: true
+slurm:
+  N: 1
+  ntasks_per_node: 40
+  mincpus: 40
+  cpus_per_task: 1
+  gpus: 2
+  runcmd: sbatch
+  partition: 'cascade.p'
+# no reactions, so we don't need to load
+# water into the reactive part of topology
+# topology:
+#   reactive:
+#     include: "SOL"
+ndx: './assets/single.ndx'
+top: './assets/single.top'
+gro: './assets/single_npt.gro'
+plumed: './assets/single_plumed.dat'
+mds:
+  eq:
+    mdp: './eq_single_2nN.mdp'
+  pull:
+    mdp: './pull_single_2nN.mdp'
+    use_plumed: true
+changer:
+  topology:
+    parameterization: basic
+  coordinates: {}
+parameterize_at_setup: false
+sequence:
+  - eq
+  - pull

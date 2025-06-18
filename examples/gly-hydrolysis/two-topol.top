@@ -1,0 +1,50 @@
+;
+;	File 'two-topol.top' was generated
+;	By user: jannik (1000)
+;	On host: pop-desktop
+;	At date: Wed Nov 27 12:54:57 2024
+;
+;	This is a standalone topology file
+;
+;	Created by:
+;	        :-) GROMACS - gmx pdb2gmx, 2024.3-dev-20240612-c7cf7c6af4 (-:
+;	
+;	Executable:   /usr/local/gromacs/bin/gmx
+;	Data prefix:  /usr/local/gromacs
+;	Working dir:  /home/jannik/phd/kimmdy-examples/examples/gly-hydrolysis
+;	Command line:
+;	  gmx pdb2gmx -f ./two-gly.pdb -o ./two-gly.gro -water tip3p -ignh -ff amber99sb-star-ildnp -p two-topol.top
+;	Force field was read from current directory or a relative path - path added.
+;
+
+; Include forcefield parameters
+#include "./amber99sb-star-ildnp.ff/forcefield.itp"
+
+; Include chain topologies
+#include "two-topol_Protein.itp"
+#include "two-topol_Protein2.itp"
+
+; Include water topology
+#include "./amber99sb-star-ildnp.ff/tip3p.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include "./amber99sb-star-ildnp.ff/ions.itp"
+
+[ system ]
+; Name
+Protein in water
+
+[ molecules ]
+; Compound        #mols
+Protein             1
+Protein2            1
+SOL         41937
+NA               117
+CL               117
