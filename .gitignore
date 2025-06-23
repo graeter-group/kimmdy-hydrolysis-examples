@@ -27,6 +27,8 @@ tmp/
 archive/
 *.qmd.otter.*
 *.quarto_ipynb
+*.tga
+*.ppm
 
 examples/collagen-hydrolysis/assets/collagen.ndx
 examples/collagen-hydrolysis/assets/collagen.top
