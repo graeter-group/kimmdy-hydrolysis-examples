@@ -1,5 +1,5 @@
 project:
-  title: KIMMDY Examples
+  title: KIMMDY Hydrolysis Examples
   type: website
   output-dir: docs
   render:
