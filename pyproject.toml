@@ -1,0 +1,39 @@
+[project]
+name = "kimmdy-hydrolysis-examples"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "cairosvg>=2.8.2",
+    "grappa-ff>=1.4.0",
+    "htmltools>=0.6.0",
+    "ipython>=8.37.0",
+    "jupyter>=1.1.1",
+    "jupyter-client>=8.6.3",
+    "kaleido>=1.0.0",
+    "kimmdy-grappa>=0.3.2",
+    "kimmdy-hydrolysis",
+    "kimmdy-paper-theme",
+    "kimmdy-reactions",
+    "kimmdy[analysis,dev,reactions]",
+    "matplotlib>=3.10.3",
+    "pandas>=2.3.1",
+    "pip>=25.1.1",
+    "plotly>=6.2.0",
+    "plotnine>=0.14.6",
+    "pnglatex>=1.1",
+    "polars>=1.31.0",
+    "pyarrow>=20.0.0",
+    "pynvim>=0.5.2",
+    "pyperclip>=1.9.0",
+    "seaborn>=0.13.2",
+    "shiny>=1.4.0",
+    "snakeviz>=2.2.2",
+]
+
+[tool.uv.sources]
+kimmdy = { path = "deps/kimmdy" }
+kimmdy-hydrolysis = { path = "deps/kimmdy-hydrolysis" }
+kimmdy-reactions = { path = "deps/kimmdy-reactions" }
+kimmdy-paper-theme = { path = "deps/kimmdy_paper_theme" }
