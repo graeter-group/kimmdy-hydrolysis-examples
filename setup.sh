@@ -14,47 +14,28 @@ if [ -f ./_modules.sh ]; then
   source ./_modules.sh
 fi
 
-# download dependencies
-# choose the ones you need to work
-# on and install the others from pypi
-# see requirements.txt
-if [ ! -d deps ]; then
-  mkdir deps
-  pushd deps
-  git clone git@github.com:graeter-group/kimmdy.git
-  git clone git@github.com:graeter-group/kimmdy-grappa.git
-  git clone git@github.com:graeter-group/kimmdy-hydrolysis
-  git clone git@github.com:graeter-group/kimmdy_paper_theme.git
-  git clone git@github.com:caapontes/kimmdy-reactions-spec-binding.git kimmdy-binding
-  popd
-fi
 
-# create virtual environment
+UV_PROJECT_ENVIRONMENT=".venv"
+
 if [[ "$(hostname)" == "cascade"* ]]; then
-  if [ ! -d .venv-cascade ]; then
-    python -m venv .venv-cascade
-    source .venv-cascade/bin/activate
-    python -m pip install --upgrade pip
-    python -m pip install -r requirements.txt
-  fi
+  ## cluster
+  echo "cascade"
+  UV_PROJECT_ENVIRONMENT=".venv-cascade"
+elif [[ "$(hostname)" == "pop-desktop" ]]; then
+  echo "local ws"
+elif [[ "$(hostname)" == "pop-laptop" ]]; then
+  # laptop
+  :
+elif [[ "$(hostname)" == "pop-os" ]]; then
+  # laptop
+  :
 else
-  if [ ! -d .venv ]; then
-    python -m venv .venv
-    source .venv/bin/activate
-    python -m pip install --upgrade pip
-    python -m pip install -r requirements.txt
-  fi
+  ## workstation
+  # source /sw/mbm/buhrjk/venvs/qmmm/bin/activate
+  UV_PROJECT_ENVIRONMENT="/sw/mbm/buhrjk/venvs/qmmm"
 fi
 
-export PS1='$ '
+source $UV_PROJECT_ENVIRONMENT/bin/activate
 
-# activate virtual environment
-if [[ "$(hostname)" == "cascade"* ]]; then
-  source .venv-cascade/bin/activate
-else
-  source .venv/bin/activate
-fi
-
-cd $current_dir
-
+export UV_PROJECT_ENVIRONMENT
 
