@@ -33,7 +33,5 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-kimmdy = { path = "deps/kimmdy" }
-kimmdy-hydrolysis = { path = "deps/kimmdy-hydrolysis" }
-kimmdy-reactions = { path = "deps/kimmdy-reactions" }
-kimmdy-paper-theme = { path = "deps/kimmdy_paper_theme" }
+kimmdy-paper-theme = { git = "https://github.com/graeter-group/kimmdy_paper_theme", rev = "2804903458990a6ed88478630f01ee744739f030" }
+
