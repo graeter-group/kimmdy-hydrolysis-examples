@@ -1,0 +1,39 @@
+---
+title: Thesis Figures
+execute:
+  eval: true
+---
+
+# Setup
+
+```{python}
+from kimmdy.topology.topology import Topology
+import pandas as pd
+import numpy as np
+from plotnine import *  # pyright: ignore
+import matplotlib.pyplot as plt
+from src.analysis import get_rates, get_sasa, prepare_data
+from src.constants import MAX_SASA
+from src.parsing import read_gro
+from src.thesis_style import (
+    HITS_CYAN,
+    HITS_DARKBLUE,
+    HITS_MAGENTA,
+    rc,
+    DPI,
+    experiment,
+    experiment_light,
+    single_column,
+    double_column,
+)
+from pathlib import Path
+from src.utils import read_xvg
+
+root = Path().resolve()
+systems = ["single", "triple", "collagen"]
+forces_nN = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3]
+phs = [7, 7.4, 12]
+rate_types = ["theo", "exp"]
+shears = ["", "_shear"]
+```
+
