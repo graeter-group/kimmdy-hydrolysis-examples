@@ -24,8 +24,6 @@ root = os.getcwd()
 example = f"{root}/examples/triplehelix-hydrolysis"
 
 theme_set(theme_minimal())
-
-plt.ion()
 ```
 
 ### analyse bond lengths
@@ -33,7 +31,8 @@ plt.ion()
 ```{python}
 system = 'triple'
 run = f"{example}/run_eq-{system}_0nN"
-distances = read_distances_dat(Path(f"{run}/2_pull/distances.dat"))
+path = f"{run}/2_pull/distances.dat"
+distances = read_distances_dat(Path(path))
 top = Topology(read_top(Path(f"{run}/0_setup/{system}.top"), ffdir=Path(f"{example}/amber99sb-star-ildnp.ff")))
 bonds = get_peptide_bonds_from_top(top)
 plumed = read_plumed(Path(f"{run}/0_setup/{system}-plumed.dat"))
@@ -48,12 +47,15 @@ for k, v in plumed["labeled_action"].items():
 
 bond_distances = {}
 for bondkey, plumed_id in bond_to_plumed_id.items():
-  bond_distances[bondkey] = distances[plumed_id]
+  bond_distances[bondkey] = []
+for time in distances.keys():
+  for bondkey, plumed_id in bond_to_plumed_id.items():
+    bond_distances[bondkey].append(distances[time][plumed_id])
 ```
 
 ```{python}
-bond = bonds[0]
-key = (bonds[0].ai, bonds[0].aj)
+bond = bonds['16']
+key = (bond.ai, bond.aj)
 bondtype = top.ff.bondtypes.get((top.atoms[bond.ai].type, top.atoms[bond.aj].type))
 r0 = float(bondtype.c0) # type: ignore
 rs: list[float] = bond_distances[key]
@@ -63,7 +65,7 @@ df = pd.DataFrame({
 })
 df['r0'] = r0
 df['key'] = str(key)
-df.to_csv(f"./results/example-bond-lengths.csv")
+df.to_csv("./results/example-bond-lengths.csv")
 
 mean = float(np.mean(rs))
 # find the mode of the distribution

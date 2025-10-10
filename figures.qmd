@@ -466,11 +466,6 @@ p.save(
 direkte force response curve von den Hyrdolyseraten ergibt denke ich noch Sinn im SI.
 
 ```{python}
-from kimmdy_hydrolysis.rates import (
-    experimental_reaction_rate_per_s,
-    theoretical_reaction_rate_per_s,
-)
-
 temperature = 300
 
 fs = np.linspace(0, 2, 100)
