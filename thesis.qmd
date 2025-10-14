@@ -11,6 +11,7 @@ from kimmdy_hydrolysis.rates import (
     experimental_reaction_rate_per_s,
     theoretical_reaction_rate_per_s,
 )
+from kimmdy.plugin_utils import calculate_forces, morse_rates_from_forces, calculate_beta, get_bondprm_from_atomtypes, get_edissoc_from_atomnames
 from kimmdy.topology.topology import Topology
 import pandas as pd
 import numpy as np
@@ -329,7 +330,9 @@ highest_rates["rounded_rate"] = highest_rates["rate"].apply(
 )
 ```
 
-## Force Response Curve
+## Force Response Curves
+
+### Hydrolysis
 
 ```{python}
 afm = pd.read_csv("./assets/afm-rates.csv")
@@ -377,6 +380,66 @@ p = (
 p.show()
 p.save("./plots/force-response.png", dpi=DPI, width=single_column, height=single_column*0.8)
 p.save("./plots/force-response.svg", dpi=72, width=single_column, height=single_column*0.8)
+```
+
+
+### Homolysis
+
+```{python}
+fs = np.linspace(0, 3, 100) # nN
+fs = fs * 603 # convert to kJ/mol/nm
+```
+
+```{python}
+# C-CA of Ala or Gly
+T = 294.15
+b0=0.14090
+kb=392459.2
+edis = 341 # kJ/mol
+beta = calculate_beta(kb=kb, edis=edis)
+ds = np.linspace(b0, 0.155, 100) # nm
+fs = calculate_forces(ds=ds, b0=b0, edis=edis, beta=beta)
+morse_ks = morse_rates_from_forces(fs=fs, b0=b0, edis=edis, beta=beta, temperature=T) # 1/s
+morse_ks = morse_ks * 1e12 # convert from ps^-1 to s^-1
+df = pd.DataFrame({"extension": ds-b0, "force": fs/603, "rate": morse_ks})
+df['hyd_rate'] = [experimental_reaction_rate_per_s(force=f/603, temperature=T) for f in fs]
+df
+```
+
+
+```{python}
+p = (
+  ggplot(df, aes(x="extension", y="force"))
+  + geom_line(size=1.3, color="black")
+  + labs(x="Bond stretching [nm]", y="Force [nN]")
+)
+p.show()
+```
+
+```{python}
+df = df.melt(id_vars=["force"], value_vars=["rate", "hyd_rate"])
+df['variable'] = df['variable'].map({'rate': 'homolysis', 'hyd_rate': 'hydrolysis'})
+```
+
+```{python}
+p = (
+    ggplot(df, aes(x="force", y="value", color="variable"))
+    + geom_line(size=1.3)
+    + labs(x="Force [nN]", y="Rate [1/s]")
+    + theme(
+        text=element_text(size=7),
+    )
+    + scale_y_log10(
+        minor_breaks=False,
+    )
+    + scale_color_manual(
+        values={
+            "homolysis": "darkred",
+            "hydrolysis": HITS_DARKBLUE,
+        }
+    )
+)
+p.show()
 ```
 
 
