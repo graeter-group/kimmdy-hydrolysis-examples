@@ -1,4 +1,4 @@
---
+---
 title: Thesis Figures
 execute:
   eval: true
@@ -26,6 +26,8 @@ from src.thesis_style import (
     HITS_MAGENTA,
     HITS_YELLOW,
     HITS_GREEN,
+    RED,
+    DARK_RED,
     rc,
     DPI,
     experiment,
@@ -94,7 +96,7 @@ p = (
         + geom_point(
             data=exp_rates.query(query),
             color="black",
-            fill=experiment,
+            fill="white",
             show_legend=False,
         )
         + geom_text(
@@ -117,13 +119,13 @@ p = (
         + scale_color_manual(
             values={
                 "hydrolysis": HITS_DARKBLUE,
-                "homolysis": "black",
+                "homolysis": DARK_RED,
             }
         )
         + scale_fill_manual(
             values={
-                "hydrolysis": experiment_light,
-                "homolysis": "black",
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": DARK_RED,
             }
         )
         + labs(x="", y="Rate [1/s] (log10 scale)")
@@ -194,7 +196,7 @@ p = (
         + geom_point(
             data=exp_rates.query(query),
             color="black",
-            fill=experiment,
+            fill="white",
             show_legend=False,
         )
         + geom_text(
@@ -243,7 +245,7 @@ p = (
         )
         + scale_fill_manual(
             values={
-                "exp": experiment_light,
+                "exp": HITS_DARKBLUE,
                 "theo": "gray",
             }
         )
@@ -382,7 +384,6 @@ p.save("./plots/force-response.png", dpi=DPI, width=single_column, height=single
 p.save("./plots/force-response.svg", dpi=72, width=single_column, height=single_column*0.8)
 ```
 
-
 ### Homolysis
 
 ```{python}
@@ -434,7 +435,7 @@ p = (
     )
     + scale_color_manual(
         values={
-            "homolysis": "darkred",
+            "homolysis": DARK_RED,
             "hydrolysis": HITS_DARKBLUE,
         }
     )

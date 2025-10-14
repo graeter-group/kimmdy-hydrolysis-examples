@@ -27,6 +27,10 @@ HITS_MAGENTA_LIGHT = "#da7da6"
 HITS_YELLOW = "#ffcc00"
 HITS_YELLOW_LIGHT = "#ffe07d"
 
+RED="#cc0130"
+DARK_RED="#ad0028"
+
+
 # https://www.mpikg.mpg.de/6339023/Logo-Guide-Print-_-Max-Planck-Gesellschaft.pdf
 MPG_grey_dark = "#777777"
 MPI_GREEN = "#006c66"
