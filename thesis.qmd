@@ -259,6 +259,182 @@ p.save("./plots/rates-hydrolysis.png", width=double_column, height=double_column
 p.save("./plots/rates-hydrolysis.svg", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
 ```
 
+## SI Fibril equal pulling vs. shear
+
+```{python}
+query = """
+True
+and ph == 7.4
+and system in ['Fibril']
+and (reaction == 'homolysis' or (reaction == 'hydrolysis' and rate_type == 'exp'))
+""".replace(
+    "\n", " "
+)
+
+sampled = sampled_rates.query(query)
+highest = highest_rates.query(query)
+
+shear_order = [True, False]
+for df in [sampled, highest]:
+  # df["shear"] = df["shear"].map({True: "Shear", False: "No Shear"})
+  df["shear"] = pd.Categorical(df["shear"], categories=shear_order, ordered=True)
+
+p = (
+    ggplot(
+        sampled,
+        aes(x='force', y="rate", color="reaction", fill="reaction"),
+    )
+        + geom_violin(aes(alpha="shear"))
+        + geom_text(
+            data=highest,
+            mapping=aes(label="rounded_rate"),
+            size=7,
+            color="black",
+            va="bottom",
+            ha="center",
+        )
+        + scale_color_manual(
+            values={
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": DARK_RED,
+            }
+        )
+        + scale_fill_manual(
+            values={
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": DARK_RED,
+            }
+        )
+        + scale_alpha_manual(
+            values={
+                True: 1,
+                False: 0.6,
+            }
+        )
+        + labs(x="", y="Rate [1/s] (log10 scale)")
+        + scale_y_log10(minor_breaks=False, breaks=[10**x for x in range(-24, 10, 3)])
+        + theme_matplotlib(rc=rc)
+        + theme(
+            text=element_text(size=7),
+            axis_text_x=element_blank(),
+            axis_ticks_x=element_blank(),
+            legend_position="inside",
+            legend_position_inside=(0.01, 0.99),
+            legend_text=element_text(size=7),
+            legend_title=element_blank(),
+            strip_text=element_text(weight="bold"),
+            strip_background=element_rect(fill="none", color="none"),
+        )
+        + guides(
+            color="none",
+            alpha="none",
+            fill="none",
+        )
+        + coord_cartesian(ylim=(1e-25, 1e9))
+        + facet_grid(
+            cols=["force", "shear"],
+            rows=["reaction"],
+            scales="free_x",
+            labeller=labeller(  # pyright: ignore
+                              force=lambda x: str(x) + " nN",
+                              shear=lambda x: str(x).replace("False", "No Shear").replace("True", ""),
+                              multi_line=True,
+                              )
+        )
+)
+p.show()
+```
+
+```{python}
+p.save("./plots/rates-fibril-shear.png", width=double_column, height=double_column / 2, dpi=DPI, verbose=False)
+p.save("./plots/rates-fibril-shear.svg", width=double_column, height=double_column / 2, dpi=DPI, verbose=False)
+```
+
+## SI Triple vs. Single 0 to 3 nN
+
+```{python}
+query = """
+(force in [0, 1, 2, 3])
+and rate_type == 'exp'
+and system in ['Single Peptide', 'Triple Helix']
+and reaction == 'hydrolysis'
+""".replace(
+    "\n", " "
+)
+
+p = (
+    ggplot(
+        sampled_rates.query(query).sort_values(["force", "shear"], ascending=[True, False]),
+        aes(x='system', y="rate", color="reaction", fill="reaction"),
+    )
+        + geom_violin()
+        + geom_point(
+            data=exp_rates.query(query),
+            color="black",
+            fill="white",
+            show_legend=False,
+        )
+        + geom_text(
+            data=highest_rates.query(query),
+            mapping=aes(label="rounded_rate"),
+            size=5,
+            color="black",
+            va="bottom",
+            ha="center",
+        )
+        + scale_color_manual(
+            values={
+                "hydrolysis": HITS_DARKBLUE,
+                "homolysis": DARK_RED,
+            }
+        )
+        + scale_fill_manual(
+            values={
+                "hydrolysis": experiment_light,
+                "homolysis": DARK_RED,
+            }
+        )
+        + labs(x="", y="Rate [1/s] (log10 scale)")
+        + scale_y_log10(minor_breaks=False, breaks=[10**x for x in range(-24, 10, 3)])
+        + theme_matplotlib(rc=rc)
+        + theme(
+            text=element_text(size=7),
+            legend_position="inside",
+            legend_position_inside=(0.01, 0.99),
+            legend_text=element_text(size=7),
+            legend_title=element_blank(),
+            strip_text=element_text(weight="bold"),
+            strip_background=element_rect(fill="none", color="none"),
+            axis_text_x=element_text(rotation=45, ha="right"),
+        )
+        + guides(
+            color="none",
+            alpha="none",
+            fill="none",
+        )
+        + coord_cartesian(ylim=(1e-12, 1e10))
+        + facet_grid(
+            cols=["force"],
+            rows=["ph"],
+            scales="free_x",
+            labeller=labeller(  # pyright: ignore
+                force=lambda x: str(x).replace(".0", " nN"),
+                shear=lambda x: str(x).replace("True", "Shear Stress").replace("False", ""),
+                ph=lambda x: "pH " + str(x),
+                multi_line=True,
+                )
+            )
+)
+p.show()
+```
+
+
+```{python}
+p.save("./plots/rates-triple-vs-single.png", width=single_column, height=single_column, dpi=DPI, verbose=False)
+p.save("./plots/rates-triple-vs-single.svg", width=single_column, height=single_column, dpi=DPI, verbose=False)
+```
+
+
 
 # Slow Growth
 
