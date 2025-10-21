@@ -26,6 +26,7 @@ from src.thesis_style import (
     HITS_MAGENTA,
     HITS_YELLOW,
     HITS_GREEN,
+    MPI_DARK_GREY,
     RED,
     DARK_RED,
     rc,
@@ -493,21 +494,7 @@ p.save("./plots/slow-growth.png", dpi=DPI, width=single_column, height=single_co
 p.save("./plots/slow-growth.svg", dpi=72, width=single_column, height=single_column*0.6)
 ```
 
-# Force-Dependent Rates
-
-## Load data
-
-```{python}
-highest_rates = pd.read_csv("./results/highest_rates.csv")
-exp_rates = pd.read_csv("./results/exp_rates.csv")
-sampled_rates = pd.read_csv("./results/sample_rates.csv")
-
-highest_rates["rounded_rate"] = highest_rates["rate"].apply(
-    lambda x: "{:.1e}".format(x)
-)
-```
-
-## Force Response Curves
+# Force Response Curves
 
 ### Hydrolysis
 
@@ -577,9 +564,19 @@ ds = np.linspace(b0, 0.155, 100) # nm
 fs = calculate_forces(ds=ds, b0=b0, edis=edis, beta=beta)
 morse_ks = morse_rates_from_forces(fs=fs, b0=b0, edis=edis, beta=beta, temperature=T) # 1/s
 morse_ks = morse_ks * 1e12 # convert from ps^-1 to s^-1
-df = pd.DataFrame({"extension": ds-b0, "force": fs/603, "rate": morse_ks})
+df = pd.DataFrame({"extension": ds-b0, "force": fs/603, "rate_cc": morse_ks})
 df['hyd_rate'] = [experimental_reaction_rate_per_s(force=f/603, temperature=T) for f in fs]
-df
+
+# CA-CB of PYD crosslink
+b0=0.14040
+kb=392459.2
+edis = 282 # kJ/mol
+beta = calculate_beta(kb=kb, edis=edis)
+ds = np.linspace(b0, 0.155, 100) # nm
+fs = calculate_forces(ds=ds, b0=b0, edis=edis, beta=beta)
+morse_ks = morse_rates_from_forces(fs=fs, b0=b0, edis=edis, beta=beta, temperature=T) # 1/s
+morse_ks = morse_ks * 1e12 # convert from ps^-1 to s^-1
+df['rate_pyd'] = morse_ks
 ```
 
 
@@ -598,14 +595,20 @@ p.save("./plots/force-extension.svg", dpi=72, width=single_column, height=single
 
 
 ```{python}
-df = df.melt(id_vars=["force"], value_vars=["rate", "hyd_rate"])
-df['variable'] = df['variable'].map({'rate': 'homolysis', 'hyd_rate': 'hydrolysis'})
+df = df.melt(id_vars=["force"], value_vars=["rate_cc", "rate_pyd" , "hyd_rate"])
+df['variable'] = df['variable'].map({'rate_cc': 'homolysis backbone','rate_pyd': 'homolysis crosslink', 'hyd_rate': 'hydrolysis'})
+hydrolysis = df.query("variable == 'hydrolysis'")
+hydrolysis['type'] = 'hydrolysis'
+homolysis = df.query("variable != 'hydrolysis'")
+homolysis = homolysis.pivot(index='force', columns='variable', values='value').reset_index()
+homolysis['type'] = 'homolysis'
 ```
 
 ```{python}
 p = (
-    ggplot(df, aes(x="force", y="value", color="variable"))
-    + geom_line(size=1.3)
+    ggplot(mapping=aes(color="type"))
+    + geom_ribbon(data=homolysis, mapping=aes(x="force", ymin="homolysis backbone", ymax="homolysis crosslink"), size=1.3, alpha=0.2, show_legend=False, fill=DARK_RED)
+    + geom_line(data=hydrolysis, mapping=aes(x="force", y="value"), size=1.3)
     + labs(x="Force [nN]", y="Rate [1/s]")
     + theme(
         text=element_text(size=7),
@@ -614,20 +617,29 @@ p = (
         minor_breaks=False,
         breaks=[10**x for x in range(-42, 7, 3)],
     )
-    + scale_x_continuous(limits=(0, 5), breaks=range(0, 6, 1))
     + scale_color_manual(
         values={
-            "homolysis": DARK_RED,
             "hydrolysis": HITS_DARKBLUE,
+            "homolysis": DARK_RED,
         }
     )
+    + scale_x_continuous(limits=(0, 5), breaks=range(0, 6, 1))
     + labs(x="Force [nN]", y="Rate [1/s]", color="")
     + theme(legend_position="inside", legend_position_inside=(0.99, 0.01),
             legend_box_margin=5, legend_title=element_blank(),
             legend_text=element_text(size=7),
             text=element_text(size=7),
+      )
+    + guides(
+        color=guide_legend(
+            override_aes={
+                "alpha": 1,
+                "linetype": "solid",
+            },
             )
+        )
 )
+
 p.show()
 p.save("./plots/force-response-homolysis.png", dpi=DPI, width=single_column, height=single_column*0.8)
 p.save("./plots/force-response-homolysis.svg", dpi=72, width=single_column, height=single_column*0.8)
