@@ -68,6 +68,32 @@ highest_rates.loc[
 exp_rates.loc[
     exp_rates["system"] == "Single Peptide", "shear"
 ] = False
+
+sasa = pd.read_csv("./results/sasa.csv")
+sasa.ai = sasa.ai.astype(int)
+
+mean_sasa: pd.DataFrame = (
+    sasa.groupby(["system", "force", "shear", "ai"]).sasa.mean().reset_index()
+)
+
+collagen_gro = read_gro(root / "examples/collagen-hydrolysis/assets/nvt.gro")
+atoms = [
+    atom for atom in collagen_gro.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
+]
+
+
+col_sasa = (
+    sasa.query("system == 'collagen' and (shear == True or force == 0 and shear == False)")
+    .groupby(["ai", "force"])
+    .agg({"sasa": "mean"})
+    .reset_index()
+)
+for i, row in col_sasa.iterrows():
+    ai = row["ai"]
+    atom = atoms[int(ai) - 1]
+    col_sasa.at[i, "x"] = atom.position[0]
+    col_sasa.at[i, "y"] = atom.position[1]
+    col_sasa.at[i, "z"] = atom.position[2]
 ```
 
 ## Main Homolysis vs. Hydrolysis
@@ -644,6 +670,196 @@ p.show()
 p.save("./plots/force-response-homolysis.png", dpi=DPI, width=single_column, height=single_column*0.8)
 p.save("./plots/force-response-homolysis.svg", dpi=72, width=single_column, height=single_column*0.8)
 ```
+
+# SASA
+
+```{python}
+annotation_df = pd.DataFrame({
+    "system": ["single"],
+    "force": [0],
+    "sasa": [MAX_SASA],
+}
+)
+mean_sasa.loc[mean_sasa['system'] == 'collagen', 'system'] = 'fibril'
+
+p = (
+    ggplot(mean_sasa.query("force in [0,1] and ((system in ['single', 'triple'] and shear == False) or (system == 'fibril' and shear == True or force == 0))"),
+      aes(x="system", y="sasa")
+    )
+    + geom_violin()
+    + geom_sina(aes(group="system"))
+    + geom_crossbar(
+        data=annotation_df,
+        y=MAX_SASA,
+        ymin=MAX_SASA,
+        ymax=MAX_SASA,
+        color="red",
+        size=0.4,
+        width=0.3,
+    )
+    + geom_text(
+        data=annotation_df,
+        label=f"max SASA: {MAX_SASA:.2f} $A^2$",
+        color="red",
+        size=8,
+        ha="center",
+        va="bottom",
+    )
+    + guides(color="none", fill="none")
+    + labs(x="", y="SASA [$A^2$]")
+    + theme(
+        text=element_text(size=7),
+        axis_ticks_x=element_blank(),
+        legend_position="inside",
+        legend_position_inside=(0.01, 0.99),
+        legend_text=element_text(size=7),
+        legend_title=element_blank(),
+        strip_text=element_text(weight="bold"),
+        strip_background=element_rect(fill="none", color="none"),
+    )
+    + scale_y_log10()
+    + guides(
+        color="none",
+        alpha="none",
+        fill="none",
+    )
+    + facet_grid(
+        cols=["force"],
+        scales="free_x",
+        labeller=labeller(  # pyright: ignore
+                          force=lambda x: str(x) + " nN",
+                          multi_line=True,
+                          )
+    )
+)
+
+p.show()
+p.save("./plots/sasa.png", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
+p.save("./plots/sasa.svg", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
+```
+
+
+```{python}
+p = (
+    ggplot(
+        col_sasa.query("y < 9.6 & y > 7.9"),
+        aes(x="z", y="x", color="sasa"),
+    )
+    + geom_point(size=0.5)
+    + scale_color_cmap(
+        limits=(0, 5),
+    )
+    + labs(x="", color="SASA [$A^2$]")
+    + facet_grid(
+        rows=["force"],
+        labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
+    )
+    + coord_equal()
+    + theme(
+        text=element_text(size=7),
+        axis_ticks_x=element_blank(),
+        legend_text=element_text(size=7),
+        strip_text=element_text(weight="bold"),
+        strip_background=element_rect(fill="none", color="none"),
+    )
+)
+p.show()
+p.save("./plots/sasa_y_slice.png", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
+p.save("./plots/sasa_y_slice.svg", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
+```
+
+slices
+
+```{python}
+p = (
+    ggplot(
+        col_sasa.query("z < 50 & z > 40"),
+        aes(x="x", y="y", fill="sasa"),
+    )
+    + geom_point()
+    + facet_grid(cols="force")
+    + scale_fill_cmap(
+        limits=(0, 5),
+    )
+    + coord_equal()
+)
+p.show()
+```
+
+```{python}
+x_center = 8.3
+y_center = 8.7
+col_sasa['r'] = np.sqrt((col_sasa['x'] - x_center)**2 + (col_sasa['y'] - y_center)**2)
+```
+
+```{python}
+p = (
+    ggplot(
+        col_sasa,
+        aes(x="r", y="sasa"),
+    )
+    + geom_point(alpha=0.1)
+    + geom_smooth(color="black", se=False, method="loess")
+    + facet_grid(rows="force")
+)
+p.show()
+```
+
+# Spacially resolved Rates
+
+
+```{python}
+col_rates = (
+    sampled_rates.query(
+        "system == 'Fibril' & force == 0 & ph == 7.4 & reaction == 'hydrolysis' & rate_type == 'theo'"
+    )
+    .groupby(["ai"])
+    .agg({"rate": "mean"})
+    .reset_index()
+)
+```
+
+add the coordinates grom the gro file to the rates dataframe
+
+```{python}
+for i, row in col_rates.iterrows():
+    ai = row["ai"]
+    atom = atoms[int(ai) - 1]
+    col_rates.at[i, "x"] = atom.position[0]
+    col_rates.at[i, "y"] = atom.position[1]
+    col_rates.at[i, "z"] = atom.position[2]
+```
+
+```{python}
+p = (
+    ggplot(
+        col_rates,
+        aes(x="x", y="y", fill="rate"),
+    )
+    + geom_point()
+)
+p.show()
+```
+
+
+
+plot in 3d colored by rate
+
+```{python}
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+ax.scatter(
+    col_rates["x"],
+    col_rates["y"],
+    col_rates["z"],
+    c=col_rates["rate"],
+    cmap="viridis",
+)
+ax.set_title("Collagen rates at 0 nN")
+plt.show()
+```
+
+
 
 
 
