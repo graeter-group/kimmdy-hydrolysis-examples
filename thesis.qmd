@@ -831,12 +831,12 @@ col_sasa['r'] = np.sqrt((col_sasa['x'] - x_center)**2 + (col_sasa['y'] - y_cente
 ```{python}
 p = (
     ggplot(
-        col_sasa.query("z < 50 & z > 40"),
+        col_sasa.query("z < 60 & z > 30"),
         aes(x="r", y="sasa"),
     )
     + geom_point(alpha=0.1)
     + geom_smooth(color="red", method="lm")
-    + labs(color="SASA [$A^2$]")
+    + labs(color="SASA [$A^2$]", x="Radial Distance from Center in x-y-plane [nm]")
     + facet_grid(
         cols=["force"],
         labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
@@ -849,9 +849,13 @@ p = (
     )
 )
 p.show()
+p.save("./plots/sasa_radial_distance.png", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
+p.save("./plots/sasa_radial_distance.svg", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
 ```
 
 ## combined with bondstats
+
+plot sasa against mean force at 1 nN shear stress
 
 
 ```{python}
@@ -862,11 +866,7 @@ df = col_sasa.set_index("ai").join(
     how="left",
 )
 df['mean_f'] = df['mean_f'] / 603  # convert to nN
-```
 
-plot sasa against mean force
-
-```{python}
 p = (
     ggplot(
         df,
@@ -883,8 +883,9 @@ p = (
     )
 )
 p.show()
+p.save("./plots/sasa_vs_mean_force.png", width=single_column, height=single_column * 0.6, dpi=DPI, verbose=False)
+p.save("./plots/sasa_vs_mean_force.svg", width=single_column, height=single_column * 0.6, dpi=DPI, verbose=False)
 ```
-
 
 
 # Spacially resolved Rates
