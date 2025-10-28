@@ -76,11 +76,17 @@ mean_sasa: pd.DataFrame = (
     sasa.groupby(["system", "force", "shear", "ai"]).sasa.mean().reset_index()
 )
 
+# collagen before pulling
 collagen_gro = read_gro(root / "examples/collagen-hydrolysis/assets/nvt.gro")
 atoms = [
     atom for atom in collagen_gro.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
 ]
-
+collagen_gro_pull = read_gro(
+    root / "examples/collagen-hydrolysis/assets/npt.gro"
+)
+atoms_pull = [
+    atom for atom in collagen_gro_pull.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
+]
 
 col_sasa = (
     sasa.query("system == 'collagen' and (shear == True or force == 0 and shear == False)")
@@ -94,6 +100,11 @@ for i, row in col_sasa.iterrows():
     col_sasa.at[i, "x"] = atom.position[0]
     col_sasa.at[i, "y"] = atom.position[1]
     col_sasa.at[i, "z"] = atom.position[2]
+
+    atom_pull = atoms_pull[int(ai) - 1]
+    col_sasa.at[i, "x_pull"] = atom_pull.position[0]
+    col_sasa.at[i, "y_pull"] = atom_pull.position[1]
+    col_sasa.at[i, "z_pull"] = atom_pull.position[2]
 ```
 
 ## Main Homolysis vs. Hydrolysis
@@ -740,16 +751,22 @@ p.save("./plots/sasa.svg", width=double_column, height=double_column / 3, dpi=DP
 
 
 ```{python}
+df = col_sasa.query("y < 9.6 & y > 7.9")
+# replace x,y,z with x_pull etc. if force is 1 nN
+df.loc[df['force'] == 1, 'x'] = df.loc[df['force'] == 1, 'x_pull']
+df.loc[df['force'] == 1, 'y'] = df.loc[df['force'] == 1, 'y_pull']
+df.loc[df['force'] == 1, 'z'] = df.loc[df['force'] == 1, 'z_pull']
+
 p = (
     ggplot(
-        col_sasa.query("y < 9.6 & y > 7.9"),
+        df,
         aes(x="z", y="x", color="sasa"),
     )
     + geom_point(size=0.5)
     + scale_color_cmap(
         limits=(0, 5),
     )
-    + labs(x="", color="SASA [$A^2$]")
+    + labs(color="SASA [$A^2$]")
     + facet_grid(
         rows=["force"],
         labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
@@ -757,7 +774,6 @@ p = (
     + coord_equal()
     + theme(
         text=element_text(size=7),
-        axis_ticks_x=element_blank(),
         legend_text=element_text(size=7),
         strip_text=element_text(weight="bold"),
         strip_background=element_rect(fill="none", color="none"),
@@ -771,17 +787,35 @@ p.save("./plots/sasa_y_slice.svg", width=double_column, height=double_column / 3
 slices
 
 ```{python}
+df = col_sasa.query("z < 50 & z > 40")
+df.loc[df['force'] == 1, 'x'] = df.loc[df['force'] == 1, 'x_pull']
+df.loc[df['force'] == 1, 'y'] = df.loc[df['force'] == 1, 'y_pull']
+df.loc[df['force'] == 1, 'z'] = df.loc[df['force'] == 1, 'z_pull']
+
 p = (
     ggplot(
-        col_sasa.query("z < 50 & z > 40"),
+        df,
         aes(x="x", y="y", fill="sasa"),
     )
-    + geom_point()
-    + facet_grid(cols="force")
+    + labs(color="SASA [$A^2$]")
+    + scale_color_cmap(
+        limits=(0, 5),
+    )
+    + geom_point(size=0.5)
+    + facet_grid(
+        cols=["force"],
+        labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
+    )
     + scale_fill_cmap(
         limits=(0, 5),
     )
     + coord_equal()
+    + theme(
+        text=element_text(size=7),
+        legend_text=element_text(size=7),
+        strip_text=element_text(weight="bold"),
+        strip_background=element_rect(fill="none", color="none"),
+    )
 )
 p.show()
 ```
@@ -795,18 +829,27 @@ col_sasa['r'] = np.sqrt((col_sasa['x'] - x_center)**2 + (col_sasa['y'] - y_cente
 ```{python}
 p = (
     ggplot(
-        col_sasa,
+        col_sasa.query("z < 50 & z > 40"),
         aes(x="r", y="sasa"),
     )
     + geom_point(alpha=0.1)
-    + geom_smooth(color="black", se=False, method="loess")
-    + facet_grid(rows="force")
+    + geom_smooth(color="red", se=False, method="loess")
+    + labs(color="SASA [$A^2$]")
+    + facet_grid(
+        cols=["force"],
+        labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
+    )
+    + theme(
+        text=element_text(size=7),
+        legend_text=element_text(size=7),
+        strip_text=element_text(weight="bold"),
+        strip_background=element_rect(fill="none", color="none"),
+    )
 )
 p.show()
 ```
 
 # Spacially resolved Rates
-
 
 ```{python}
 col_rates = (
@@ -840,7 +883,6 @@ p = (
 )
 p.show()
 ```
-
 
 
 plot in 3d colored by rate
