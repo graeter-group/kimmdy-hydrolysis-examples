@@ -795,18 +795,18 @@ df.loc[df['force'] == 1, 'z'] = df.loc[df['force'] == 1, 'z_pull']
 p = (
     ggplot(
         df,
-        aes(x="x", y="y", fill="sasa"),
+        aes(x="x", y="y", color="sasa"),
     )
     + labs(color="SASA [$A^2$]")
     + scale_color_cmap(
         limits=(0, 5),
     )
-    + geom_point(size=0.5)
+    + geom_point(size=0.01)
     + facet_grid(
         cols=["force"],
         labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
     )
-    + scale_fill_cmap(
+    + scale_color_cmap(
         limits=(0, 5),
     )
     + coord_equal()
@@ -818,6 +818,8 @@ p = (
     )
 )
 p.show()
+p.save("./plots/sasa_z_slice.png", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
+p.save("./plots/sasa_z_slice.svg", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
 ```
 
 ```{python}
@@ -833,7 +835,7 @@ p = (
         aes(x="r", y="sasa"),
     )
     + geom_point(alpha=0.1)
-    + geom_smooth(color="red", se=False, method="loess")
+    + geom_smooth(color="red", method="lm")
     + labs(color="SASA [$A^2$]")
     + facet_grid(
         cols=["force"],
@@ -848,6 +850,42 @@ p = (
 )
 p.show()
 ```
+
+## combined with bondstats
+
+
+```{python}
+bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv").filter(items=["ai", "mean_f"]).set_index("ai")
+df = col_sasa.set_index("ai").join(
+    bondstats,
+    on="ai",
+    how="left",
+)
+df['mean_f'] = df['mean_f'] / 603  # convert to nN
+```
+
+plot sasa against mean force
+
+```{python}
+p = (
+    ggplot(
+        df,
+        aes(x="mean_f", y="sasa"),
+    )
+    + geom_point(alpha=0.1)
+    + geom_smooth(color="red", method="lm")
+    + labs(x="Mean Force [nN]", y="SASA [$A^2$]")
+    + theme(
+        text=element_text(size=7),
+        legend_text=element_text(size=7),
+        strip_text=element_text(weight="bold"),
+        strip_background=element_rect(fill="none", color="none"),
+    )
+)
+p.show()
+```
+
+
 
 # Spacially resolved Rates
 
