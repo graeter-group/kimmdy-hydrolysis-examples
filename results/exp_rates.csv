@@ -1,0 +1,5 @@
+Unnamed: 0,force,rate_s,rate_ps,rate_type,ph,system,reaction,shear,rate,reaction_type,cat
+0,0.0,2.5703957827688646e-09,2.570395782768865e-21,exp,7.4,Single Peptide,hydrolysis,True,2.5703957827688646e-09,hydrolysis exp,hydrolysis expFalse
+33,1.0,7.413102413009174,7.413102413009174e-12,exp,7.4,Single Peptide,hydrolysis,False,7.413102413009174,hydrolysis exp,hydrolysis expFalse
+66,2.0,36.30780547701012,3.6307805477010116e-11,exp,7.4,Single Peptide,hydrolysis,False,36.30780547701012,hydrolysis exp,hydrolysis expFalse
+99,3.0,177.82794100389228,1.778279410038923e-10,exp,7.4,Single Peptide,hydrolysis,False,177.82794100389228,hydrolysis exp,hydrolysis expFalse

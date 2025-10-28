@@ -1,5 +1,8 @@
 /deps/
-results/
+results/rates.csv
+results/sasa.csv
+results/sample_rates.csv
+results/rates/*
 .venv
 .venv-cascade
 vmdscene*

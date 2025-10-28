@@ -1,0 +1,109 @@
+reaction,system,force,ph,rate_type,shear,rate,rounded_rate,reaction_type,cat
+hydrolysis,Triple Helix,0.0,12.0,exp,True,0.00025989346124104885,2.6e-04,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,0.6,7.4,theo,True,0.0009048108194493537,9.0e-04,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Fibril,0.0,7.4,exp,True,5.084263978125673e-08,5.1e-08,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,0.2,7.4,theo,True,0.00018316582327633607,1.8e-04,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Single Peptide,0.0,7.4,theo,True,2.9892122643468745e-06,3.0e-06,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Fibril,0.9,7.4,exp,True,261.44787713331453,2.6e+02,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Single Peptide,1.0,7.4,theo,False,0.000676953952590221,6.8e-04,hydrolysis theo,hydrolysis theoFalse
+homolysis,Triple Helix,2.0,12.0,theo,False,0.016334995288608514,1.6e-02,homolysis theo,homolysis theoFalse
+hydrolysis,Triple Helix,3.0,12.0,exp,False,29237693.05957543,2.9e+07,hydrolysis exp,hydrolysis expFalse
+homolysis,Fibril,0.4,7.4,theo,True,2.3196332096853246e-08,2.3e-08,homolysis theo,homolysis theoTrue
+hydrolysis,Fibril,1.0,7.4,exp,False,113.76437407088129,1.1e+02,hydrolysis exp,hydrolysis expFalse
+homolysis,Single Peptide,2.0,7.4,theo,False,1.3728568487108936e-05,1.4e-05,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,1.0,7.0,theo,False,0.000269500222660699,2.7e-04,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,1.0,7.4,theo,False,0.0007658977811359108,7.7e-04,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,2.0,7.4,theo,False,0.009652771109635524,9.7e-03,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,3.0,7.4,theo,False,0.0025423707208695433,2.5e-03,hydrolysis theo,hydrolysis theoFalse
+homolysis,Single Peptide,0.0,7.0,theo,True,9.96487631169366e-23,1.0e-22,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,1.0,7.4,exp,False,32.2690049386801,3.2e+01,hydrolysis exp,hydrolysis expFalse
+homolysis,Fibril,0.2,7.4,theo,True,2.3953956924306905e-14,2.4e-14,homolysis theo,homolysis theoTrue
+hydrolysis,Triple Helix,3.0,12.0,theo,False,101.21360141834282,1.0e+02,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,2.0,7.0,theo,False,0.003842837394457537,3.8e-03,hydrolysis theo,hydrolysis theoFalse
+homolysis,Single Peptide,3.0,12.0,theo,False,57.88633806907754,5.8e+01,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.8,7.4,theo,True,0.0014723636575464819,1.5e-03,hydrolysis theo,hydrolysis theoTrue
+homolysis,Triple Helix,0.0,7.0,theo,True,4.0030329969455123e-19,4.0e-19,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,3.0,7.0,exp,False,236.7711306438565,2.4e+02,hydrolysis exp,hydrolysis expFalse
+homolysis,Single Peptide,1.0,12.0,theo,False,1.0051603059520429e-13,1.0e-13,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,3.0,12.0,theo,False,97.8266001501163,9.8e+01,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,2.0,7.4,exp,False,918.4360482154132,9.2e+02,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Triple Helix,0.0,12.0,theo,True,0.09527215630466551,9.5e-02,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,1.0,7.0,theo,False,0.00030490939858121883,3.0e-04,hydrolysis theo,hydrolysis theoFalse
+homolysis,Single Peptide,1.0,7.0,theo,False,1.0051603139772992e-13,1.0e-13,homolysis theo,homolysis theoFalse
+homolysis,Triple Helix,1.0,12.0,theo,False,2.479253407405292e-12,2.5e-12,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.2,7.4,exp,True,0.06234927066630264,6.2e-02,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Triple Helix,2.0,7.4,theo,False,0.0013782773159057126,1.4e-03,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,1.0,12.0,theo,False,26.9500222660699,2.7e+01,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,0.0,7.4,exp,True,8.154289268744705e-09,8.2e-09,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Single Peptide,3.0,7.0,theo,False,0.0009782660015011631,9.8e-04,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Fibril,0.1,7.4,theo,True,7.983275829794491e-05,8.0e-05,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Fibril,0.5,7.4,theo,True,0.0006756062743029608,6.8e-04,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Fibril,0.7,7.4,exp,True,114.33018831899199,1.1e+02,hydrolysis exp,hydrolysis expTrue
+homolysis,Triple Helix,3.0,7.0,theo,False,3194.1074667152366,3.2e+03,homolysis theo,homolysis theoFalse
+homolysis,Triple Helix,1.0,7.0,theo,False,2.479253407405292e-12,2.5e-12,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,2.0,7.0,exp,False,365.63597648937315,3.7e+02,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Single Peptide,0.0,7.0,theo,True,1.1900268367429453e-06,1.2e-06,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,2.0,7.0,exp,False,72.34928429647766,7.2e+01,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,0.3,7.4,exp,True,1.1273120549138018,1.1e+00,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Triple Helix,1.0,12.0,theo,False,30.4909398581219,3.0e+01,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,1.0,12.0,exp,False,1284652.225271475,1.3e+06,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Triple Helix,1.0,7.0,exp,False,15.672022172993577,1.6e+01,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,0.4,7.4,exp,True,26.62288361158455,2.7e+01,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Triple Helix,2.0,12.0,exp,False,7234928.429647766,7.2e+06,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Triple Helix,0.0,7.4,theo,True,2.393128367223494e-06,2.4e-06,hydrolysis theo,hydrolysis theoFalse
+homolysis,Fibril,0.6,7.4,theo,True,0.2508833423898688,2.5e-01,homolysis theo,homolysis theoTrue
+hydrolysis,Single Peptide,2.0,12.0,theo,False,384.28373944575367,3.8e+02,hydrolysis theo,hydrolysis theoFalse
+homolysis,Fibril,0.8,7.4,theo,True,22858.203504260702,2.3e+04,homolysis theo,homolysis theoTrue
+homolysis,Fibril,1.0,7.4,theo,True,12609963.49450322,1.3e+07,homolysis theo,homolysis theoTrue
+hydrolysis,Triple Helix,0.0,7.0,theo,True,9.527215630466553e-07,9.5e-07,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,3.0,7.0,exp,False,292.37693059575423,2.9e+02,hydrolysis exp,hydrolysis expFalse
+homolysis,Single Peptide,0.0,12.0,theo,True,9.964876303952158e-23,1.0e-22,homolysis theo,homolysis theoFalse
+homolysis,Triple Helix,1.0,7.4,theo,False,2.479253407405292e-12,2.5e-12,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,1.0,7.4,exp,True,229.8808217006439,2.3e+02,hydrolysis exp,hydrolysis expTrue
+homolysis,Triple Helix,0.0,12.0,theo,True,4.0030329969455123e-19,4.0e-19,homolysis theo,homolysis theoFalse
+homolysis,Triple Helix,0.0,7.4,theo,True,4.0030329969455123e-19,4.0e-19,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.7,7.4,theo,True,0.0010287942879330834,1.0e-03,hydrolysis theo,hydrolysis theoTrue
+homolysis,Single Peptide,3.0,7.4,theo,False,57.88633806907754,5.8e+01,homolysis theo,homolysis theoFalse
+hydrolysis,Triple Helix,1.0,12.0,exp,False,1567202.217299358,1.6e+06,hydrolysis exp,hydrolysis expFalse
+homolysis,Single Peptide,2.0,12.0,theo,False,1.3728568487108936e-05,1.4e-05,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,0.0,12.0,exp,True,0.0003246281028654698,3.2e-04,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,0.4,7.4,theo,True,0.0005863882577273292,5.9e-04,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Fibril,0.1,7.4,exp,True,0.33980790188777876,3.4e-01,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Single Peptide,1.0,7.0,exp,False,12.846522252714747,1.3e+01,hydrolysis exp,hydrolysis expFalse
+homolysis,Fibril,0.7,7.4,theo,True,128.36155568543464,1.3e+02,homolysis theo,homolysis theoTrue
+homolysis,Triple Helix,3.0,7.4,theo,False,3194.1074667152366,3.2e+03,homolysis theo,homolysis theoFalse
+hydrolysis,Triple Helix,2.0,7.0,theo,False,0.0005487020824732916,5.5e-04,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Single Peptide,0.0,12.0,theo,True,0.11900268367429455,1.2e-01,hydrolysis theo,hydrolysis theoFalse
+homolysis,Triple Helix,2.0,7.0,theo,False,0.016334995288608514,1.6e-02,homolysis theo,homolysis theoFalse
+homolysis,Single Peptide,1.0,7.4,theo,False,1.0051603059520429e-13,1.0e-13,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,1.0,7.4,theo,False,0.0010577752976980628,1.1e-03,hydrolysis theo,hydrolysis theoFalse
+homolysis,Fibril,0.9,7.4,theo,True,16139.792608883034,1.6e+04,homolysis theo,homolysis theoTrue
+homolysis,Fibril,0.0,7.4,theo,True,2.467463612032485e-13,2.5e-13,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.9,7.4,theo,True,0.001277571182655484,1.3e-03,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Fibril,0.8,7.4,exp,True,319.2735988802683,3.2e+02,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Triple Helix,1.0,7.4,exp,False,39.36633985065989,3.9e+01,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Single Peptide,3.0,7.4,theo,False,0.0024572930955779047,2.5e-03,hydrolysis theo,hydrolysis theoFalse
+homolysis,Fibril,0.3,7.4,theo,True,8.205771711942524e-13,8.2e-13,homolysis theo,homolysis theoTrue
+hydrolysis,Triple Helix,2.0,7.4,exp,False,181.73318555375155,1.8e+02,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,1.0,7.4,theo,True,0.0013865790618248493,1.4e-03,hydrolysis theo,hydrolysis theoTrue
+hydrolysis,Triple Helix,0.0,7.0,exp,True,2.598934612410488e-09,2.6e-09,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Single Peptide,2.0,12.0,exp,False,36563597.64893732,3.7e+07,hydrolysis exp,hydrolysis expFalse
+homolysis,Fibril,0.1,7.4,theo,True,2.335359527568505e-13,2.3e-13,homolysis theo,homolysis theoTrue
+hydrolysis,Single Peptide,3.0,7.4,exp,False,594.7421904374858,5.9e+02,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Fibril,0.0,7.4,theo,True,1.8637975349787787e-05,1.9e-05,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,3.0,7.0,theo,False,0.0010121360141834282,1.0e-03,hydrolysis theo,hydrolysis theoFalse
+hydrolysis,Triple Helix,3.0,7.4,exp,False,734.417644849894,7.3e+02,hydrolysis exp,hydrolysis expFalse
+homolysis,Triple Helix,2.0,7.4,theo,False,0.016334995288608514,1.6e-02,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.3,7.4,theo,True,0.0003354606131091235,3.4e-04,hydrolysis theo,hydrolysis theoTrue
+homolysis,Fibril,1.0,7.4,theo,False,0.28636906669230133,2.9e-01,homolysis theo,homolysis theoFalse
+homolysis,Triple Helix,3.0,12.0,theo,False,3194.1074667152366,3.2e+03,homolysis theo,homolysis theoFalse
+homolysis,Single Peptide,0.0,7.4,theo,True,9.964876303952158e-23,1.0e-22,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.5,7.4,exp,True,45.44525353730166,4.5e+01,hydrolysis exp,hydrolysis expTrue
+homolysis,Single Peptide,2.0,7.0,theo,False,1.3728568718263568e-05,1.4e-05,homolysis theo,homolysis theoFalse
+hydrolysis,Fibril,0.6,7.4,exp,True,82.37383271277892,8.2e+01,hydrolysis exp,hydrolysis expTrue
+hydrolysis,Single Peptide,0.0,7.0,exp,True,3.2462810286546978e-09,3.2e-09,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Triple Helix,2.0,12.0,theo,False,54.87020824732915,5.5e+01,hydrolysis theo,hydrolysis theoFalse
+homolysis,Fibril,0.5,7.4,theo,True,7.474658404240978e-05,7.5e-05,homolysis theo,homolysis theoTrue
+homolysis,Single Peptide,3.0,7.0,theo,False,57.886338281146905,5.8e+01,homolysis theo,homolysis theoFalse
+hydrolysis,Single Peptide,3.0,12.0,exp,False,23677113.064385656,2.4e+07,hydrolysis exp,hydrolysis expFalse
+hydrolysis,Triple Helix,0.0,7.4,exp,True,6.528228589294522e-09,6.5e-09,hydrolysis exp,hydrolysis expFalse
