@@ -834,9 +834,10 @@ p = (
         col_sasa.query("z < 60 & z > 30"),
         aes(x="r", y="sasa"),
     )
-    + geom_point(alpha=0.1)
-    + geom_smooth(color="red", method="lm")
-    + labs(color="SASA [$A^2$]", x="Radial Distance from Center in x-y-plane [nm]")
+    + geom_point(alpha=0.1, color=MPI_DARK_GREY)
+    # + geom_bin_2d(bins=100)
+    + geom_smooth(color="black", method="lm")
+    + labs(y="SASA [$A^2$]", x="Radial Distance from Center in x-y-plane [nm]")
     + facet_grid(
         cols=["force"],
         labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
@@ -860,6 +861,17 @@ plot sasa against mean force at 1 nN shear stress
 
 ```{python}
 bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv").filter(items=["ai", "mean_f"]).set_index("ai")
+bondstats_0 = pd.read_csv("./examples/collagen-hydrolysis/assets/collagen_bondstats.csv").filter(items=["ai", "mean_f"]).set_index("ai")
+bondstats = bondstats.join(
+    bondstats_0,
+    on="ai",
+    how="left",
+    lsuffix="_shear",
+    rsuffix="_0nN",
+)
+bondstats['mean_f'] = bondstats['mean_f_shear'] - bondstats['mean_f_0nN']
+bondstats = bondstats.reset_index()
+
 df = col_sasa.set_index("ai").join(
     bondstats,
     on="ai",
@@ -872,9 +884,10 @@ p = (
         df,
         aes(x="mean_f", y="sasa"),
     )
-    + geom_point(alpha=0.1)
-    + geom_smooth(color="red", method="lm")
-    + labs(x="Mean Force [nN]", y="SASA [$A^2$]")
+    # + geom_point(alpha=0.1, color=MPI_DARK_GREY)
+    + geom_bin_2d(bins=100)
+    # + geom_smooth(color="black", method="lm")
+    + labs(x="Mean Excess Force [nN]", y="SASA [$A^2$]")
     + theme(
         text=element_text(size=7),
         legend_text=element_text(size=7),
@@ -885,6 +898,14 @@ p = (
 p.show()
 p.save("./plots/sasa_vs_mean_force.png", width=single_column, height=single_column * 0.6, dpi=DPI, verbose=False)
 p.save("./plots/sasa_vs_mean_force.svg", width=single_column, height=single_column * 0.6, dpi=DPI, verbose=False)
+```
+
+correlation coefficient between sasa and mean force
+
+```{python}
+corr = df[['sasa', 'mean_f']].corr(method='pearson').iloc[0,1]
+r_squared = corr**2
+print(f"Pearson correlation coefficient between SASA and mean force: {corr:.3f} (R² = {r_squared:.3f})")
 ```
 
 
