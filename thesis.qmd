@@ -588,9 +588,6 @@ p.save("./plots/force-response.svg", dpi=72, width=single_column, height=single_
 ```{python}
 fs = np.linspace(0, 3, 100) # nN
 fs = fs * 603 # convert to kJ/mol/nm
-```
-
-```{python}
 # C-CA of Ala or Gly
 T = 294.15
 b0=0.14090
@@ -614,6 +611,21 @@ fs = calculate_forces(ds=ds, b0=b0, edis=edis, beta=beta)
 morse_ks = morse_rates_from_forces(fs=fs, b0=b0, edis=edis, beta=beta, temperature=T) # 1/s
 morse_ks = morse_ks * 1e12 # convert from ps^-1 to s^-1
 df['rate_pyd'] = morse_ks
+```
+
+```{python}
+# example
+example_force = 2.0
+morse_ks = morse_rates_from_forces(
+    fs=np.array([example_force * 603]),
+    b0=b0,
+    edis=edis,
+    beta=beta,
+    temperature=T,
+)  # 1/s
+morse_ks = morse_ks * 1e12  # convert from ps^-1 to s^-1
+lifetime = 1 / morse_ks[0]
+print(f"At {example_force} nN, the homolysis rate is {morse_ks[0]:.2e} 1/s, corresponding to a lifetime of {lifetime:.2e} s.")
 ```
 
 
