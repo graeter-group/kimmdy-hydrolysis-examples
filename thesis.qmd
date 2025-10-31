@@ -740,7 +740,9 @@ p = (
         strip_text=element_text(weight="bold"),
         strip_background=element_rect(fill="none", color="none"),
     )
-    + scale_y_log10()
+    + scale_y_log10(
+      breaks=[10**x for x in range(-6, 1, 1)],
+    )
     + guides(
         color="none",
         alpha="none",
