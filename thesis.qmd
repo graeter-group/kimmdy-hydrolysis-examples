@@ -105,6 +105,14 @@ for i, row in col_sasa.iterrows():
     col_sasa.at[i, "x_pull"] = atom_pull.position[0]
     col_sasa.at[i, "y_pull"] = atom_pull.position[1]
     col_sasa.at[i, "z_pull"] = atom_pull.position[2]
+
+
+bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv")
+bondstats_0 = pd.read_csv("./examples/collagen-hydrolysis/assets/collagen_bondstats.csv")
+
+top = Topology.from_path(
+    "./examples/collagen-hydrolysis/assets/collagen.top"
+)
 ```
 
 ## Main Homolysis vs. Hydrolysis
@@ -190,9 +198,9 @@ p = (
             cols=["system", "force", "shear"],
             scales="free_x",
             labeller=labeller(  # pyright: ignore
-              system=lambda x: str(x).replace("Fibril", "").replace("Single Peptide", ""),
+              # system=lambda x: str(x).replace("Fibril", "").replace("Single Peptide", ""),
               force=lambda x: str(x).replace(".0", " nN"),
-              shear=lambda x: str(x).replace("True", "Shear Stress").replace("False", ""),
+              shear=lambda x: str(x).replace("True", "").replace("False", ""),
               multi_line=True
              )
         )
@@ -531,7 +539,9 @@ p.save("./plots/slow-growth.png", dpi=DPI, width=single_column, height=single_co
 p.save("./plots/slow-growth.svg", dpi=72, width=single_column, height=single_column*0.6)
 ```
 
-# Force Response Curves
+# Force Response
+
+## Force Response Curves
 
 ### Hydrolysis
 
@@ -692,6 +702,41 @@ p = (
 p.show()
 p.save("./plots/force-response-homolysis.png", dpi=DPI, width=single_column, height=single_column*0.8)
 p.save("./plots/force-response-homolysis.svg", dpi=72, width=single_column, height=single_column*0.8)
+```
+
+## Bond stretching forces
+
+Histogram of mean forces at 0 nN
+
+Get atomtypes from `top`, `ai` and `aj` are also the key for top.atoms
+
+```{python}
+bondstats_0['atom_i'] = [top.atoms[str(ai)].type for ai in bondstats_0['ai']]
+bondstats_0['atom_j'] = [top.atoms[str(aj)].type for aj in bondstats_0['aj']]
+bondstats_0['bond_type'] = bondstats_0.apply(
+  lambda row: "-".join(sorted([row['atom_i'], row['atom_j']])),
+  axis=1,
+)
+bondstats_0['external_force'] = 0.0
+
+bondstats['atom_i'] = [top.atoms[str(ai)].type for ai in bondstats['ai']]
+bondstats['atom_j'] = [top.atoms[str(aj)].type for aj in bondstats['aj']]
+bondstats['bond_type'] = bondstats.apply(
+  lambda row: "-".join(sorted([row['atom_i'], row['atom_j']])),
+  axis=1,
+)
+bondstats['external_force'] = 1.0
+```
+
+```{python}
+p = (
+  ggplot(
+    bondstats_0,
+    aes(x="mean_f", fill='bond_type'),
+  )
+  + geom_density(alpha=0.7)
+)
+p.show()
 ```
 
 # SASA
@@ -872,22 +917,21 @@ p.save("./plots/sasa_radial_distance.svg", width=double_column, height=double_co
 
 plot sasa against mean force at 1 nN shear stress
 
-
 ```{python}
-bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv").filter(items=["ai", "mean_f"]).set_index("ai")
-bondstats_0 = pd.read_csv("./examples/collagen-hydrolysis/assets/collagen_bondstats.csv").filter(items=["ai", "mean_f"]).set_index("ai")
-bondstats = bondstats.join(
-    bondstats_0,
+df = bondstats.filter(items=["ai", "mean_f"]).set_index("ai")
+df_0 = bondstats_0.filter(items=["ai", "mean_f"]).set_index("ai")
+df = df.join(
+    df_0,
     on="ai",
     how="left",
     lsuffix="_shear",
     rsuffix="_0nN",
 )
-bondstats['mean_f'] = bondstats['mean_f_shear'] - bondstats['mean_f_0nN']
-bondstats = bondstats.reset_index()
+df['mean_f'] = df['mean_f_shear'] - df['mean_f_0nN']
+df = df.reset_index()
 
 df = col_sasa.set_index("ai").join(
-    bondstats,
+    df,
     on="ai",
     how="left",
 )
