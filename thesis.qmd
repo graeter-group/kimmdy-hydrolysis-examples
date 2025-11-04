@@ -726,17 +726,37 @@ bondstats['bond_type'] = bondstats.apply(
   axis=1,
 )
 bondstats['external_force'] = 1.0
+bs = pd.concat([bondstats_0, bondstats], ignore_index=True)
+bs['mean_f_nN'] = bs['mean_f'] / 603
+bs = bs.query('bond_type != "CT-N3"') # filter out the bond at the end of Lys, that's not part of the backbone
 ```
 
 ```{python}
 p = (
   ggplot(
-    bondstats_0,
-    aes(x="mean_f", fill='bond_type'),
+    bs,
+    aes(x="mean_f_nN", fill='bond_type'),
   )
   + geom_density(alpha=0.7)
+  + facet_wrap('external_force',
+      nrow=2,
+      labeller=labeller(external_force=lambda x: f"Applied Force: {x} nN"), # pyright: ignore
+      scales="free_y"
+    )
+  + labs(x="Mean Bond Force [nN]", y="Density", fill="Bond Type")
+  + theme(
+      # text=element_text(size=7),
+      legend_position="inside",
+      legend_position_inside=(0.99, 0.99),
+      # legend_text=element_text(size=7),
+      legend_background=element_blank(),
+      strip_text=element_text(weight="bold"),
+      strip_background=element_rect(fill="none", color="none"),
+  )
 )
 p.show()
+p.save("./plots/bond-forces.png", dpi=DPI, width=single_column, height=single_column)
+p.save("./plots/bond-forces.svg", dpi=72, width=single_column, height=single_column)
 ```
 
 # SASA
