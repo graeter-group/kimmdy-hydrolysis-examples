@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 from src.analysis import get_rates, get_sasa, prepare_data
 from src.constants import MAX_SASA
 from src.parsing import read_gro
+from src.style import HITS_CYAN_LIGHT, HITS_GREEN_LIGHT, HITS_MAGENTA_LIGHT, HITS_SIGNALBLUE, HITS_YELLOW_LIGHT
 from src.thesis_style import (
     HITS_CYAN,
     HITS_DARKBLUE,
@@ -714,7 +715,7 @@ Get atomtypes from `top`, `ai` and `aj` are also the key for top.atoms
 bondstats_0['atom_i'] = [top.atoms[str(ai)].type for ai in bondstats_0['ai']]
 bondstats_0['atom_j'] = [top.atoms[str(aj)].type for aj in bondstats_0['aj']]
 bondstats_0['bond_type'] = bondstats_0.apply(
-  lambda row: "-".join(sorted([row['atom_i'], row['atom_j']])),
+  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
   axis=1,
 )
 bondstats_0['external_force'] = 0.0
@@ -722,41 +723,86 @@ bondstats_0['external_force'] = 0.0
 bondstats['atom_i'] = [top.atoms[str(ai)].type for ai in bondstats['ai']]
 bondstats['atom_j'] = [top.atoms[str(aj)].type for aj in bondstats['aj']]
 bondstats['bond_type'] = bondstats.apply(
-  lambda row: "-".join(sorted([row['atom_i'], row['atom_j']])),
+  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
   axis=1,
 )
 bondstats['external_force'] = 1.0
 bs = pd.concat([bondstats_0, bondstats], ignore_index=True)
 bs['mean_f_nN'] = bs['mean_f'] / 603
-bs = bs.query('bond_type != "CT-N3"') # filter out the bond at the end of Lys, that's not part of the backbone
+bs = bs.query('bond_type != "N3-CT"') # filter out the bond at the end of Lys, that's not part of the backbone
+
+bs['residue_pair'] = bs.apply(
+  lambda row: "-".join(([top.atoms[str(row['ai'])].residue, top.atoms[str(row['aj'])].residue])),
+  axis=1,
+)
+# check for Proline or Hydroxyproline in the bond (PRO, HYP)
+# pro/hyp in first position:
+bs['pro_first'] = bs.apply(
+  lambda row: top.atoms[str(row['ai'])].residue in ['PRO', 'HYP'],
+  axis=1,
+)
+# pro/hyp in second position:
+bs['pro_second'] = bs.apply(
+  lambda row: top.atoms[str(row['aj'])].residue in ['PRO', 'HYP'],
+  axis=1,
+)
+bs['pro_position'] = bs.apply(
+  lambda row: 'both' if row['pro_first'] and row['pro_second'] else ('C' if row['pro_first'] else ('N' if row['pro_second'] else 'none')),
+  axis=1,
+)
 ```
 
 ```{python}
 p = (
   ggplot(
     bs,
-    aes(x="mean_f_nN", fill='bond_type'),
+    aes(x="mean_f_nN", fill='bond_type', color='pro_position'),
   )
-  + geom_density(alpha=0.7)
+  + geom_density(alpha=0.5, size=1.3)
   + facet_wrap('external_force',
       nrow=2,
       labeller=labeller(external_force=lambda x: f"Applied Force: {x} nN"), # pyright: ignore
       scales="free_y"
     )
-  + labs(x="Mean Bond Force [nN]", y="Density", fill="Bond Type")
+  + labs(x="Mean Bond Force [nN]",
+         y="Density",
+         fill="Bond Type",
+         color="has Pro/Hyp"
+  )
+  + scale_color_manual(
+      values={
+          'none': "black",
+          'C': HITS_YELLOW_LIGHT,
+          'N': HITS_CYAN_LIGHT,
+          'both': HITS_MAGENTA_LIGHT,
+      }
+  )
+  + scale_fill_manual(
+      values={
+          "CT-C": MPI_DARK_GREY,
+          "C-N": HITS_SIGNALBLUE,
+          "N-CT": HITS_GREEN_LIGHT,
+      },
+      guide=guide_legend( # pyright: ignore
+          override_aes={
+              "alpha": 1,
+              "color": None
+          },
+      )
+  )
   + theme(
-      # text=element_text(size=7),
+      text=element_text(size=7),
       legend_position="inside",
       legend_position_inside=(0.99, 0.99),
-      # legend_text=element_text(size=7),
+      legend_text=element_text(size=7),
       legend_background=element_blank(),
       strip_text=element_text(weight="bold"),
       strip_background=element_rect(fill="none", color="none"),
   )
 )
 p.show()
-p.save("./plots/bond-forces.png", dpi=DPI, width=single_column, height=single_column)
-p.save("./plots/bond-forces.svg", dpi=72, width=single_column, height=single_column)
+p.save("./plots/bond-forces.png", dpi=DPI, width=double_column, height=double_column*2/3)
+p.save("./plots/bond-forces.svg", dpi=72, width=double_column, height=double_column*2/3)
 ```
 
 # SASA
