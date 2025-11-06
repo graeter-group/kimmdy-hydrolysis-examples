@@ -11,13 +11,13 @@ from kimmdy_hydrolysis.rates import (
     experimental_reaction_rate_per_s,
     theoretical_reaction_rate_per_s,
 )
-from kimmdy.plugin_utils import calculate_forces, morse_rates_from_forces, calculate_beta, get_bondprm_from_atomtypes, get_edissoc_from_atomnames
+import gc
+from kimmdy.plugin_utils import calculate_forces, morse_rates_from_forces, calculate_beta
 from kimmdy.topology.topology import Topology
 import pandas as pd
 import numpy as np
 from plotnine import *  # pyright: ignore
 import matplotlib.pyplot as plt
-from src.analysis import get_rates, get_sasa, prepare_data
 from src.constants import MAX_SASA
 from src.parsing import read_gro
 from src.style import HITS_CYAN_LIGHT, HITS_GREEN_LIGHT, HITS_MAGENTA_LIGHT, HITS_SIGNALBLUE, HITS_YELLOW_LIGHT
@@ -25,15 +25,11 @@ from src.thesis_style import (
     HITS_CYAN,
     HITS_DARKBLUE,
     HITS_MAGENTA,
-    HITS_YELLOW,
-    HITS_GREEN,
     MPI_DARK_GREY,
-    RED,
     DARK_RED,
     rc,
     DPI,
-    experiment,
-    experiment_light,
+    HITS_CYAN_LIGHT,
     single_column,
     double_column,
 )
@@ -76,6 +72,7 @@ sasa.ai = sasa.ai.astype(int)
 mean_sasa: pd.DataFrame = (
     sasa.groupby(["system", "force", "shear", "ai"]).sasa.mean().reset_index()
 )
+mean_sasa.loc[mean_sasa['system'] == 'collagen', 'system'] = 'fibril'
 
 # collagen before pulling
 collagen_gro = read_gro(root / "examples/collagen-hydrolysis/assets/nvt.gro")
@@ -110,10 +107,47 @@ for i, row in col_sasa.iterrows():
 
 bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv")
 bondstats_0 = pd.read_csv("./examples/collagen-hydrolysis/assets/collagen_bondstats.csv")
+bondstats_0['external_force'] = 0.0
+bondstats['external_force'] = 1.0
+bs = pd.concat([bondstats_0, bondstats], ignore_index=True)
+bs['mean_f_nN'] = bs['mean_f'] / 603
 
 top = Topology.from_path(
     "./examples/collagen-hydrolysis/assets/collagen.top"
 )
+bonds = bondstats.filter(items=["ai", "aj"])
+bonds['atom_i'] = [top.atoms[str(ai)].type for ai in bonds['ai']]
+bonds['atom_j'] = [top.atoms[str(aj)].type for aj in bonds['aj']]
+bonds['bond_type'] = bonds.apply(
+  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
+  axis=1,
+)
+bonds['residue_pair'] = bonds.apply(
+  lambda row: "-".join(([top.atoms[str(row['ai'])].residue, top.atoms[str(row['aj'])].residue])),
+  axis=1,
+)
+bonds['pro_first'] = bonds.apply(
+  lambda row: top.atoms[str(row['ai'])].residue in ['PRO', 'HYP'],
+  axis=1,
+)
+bonds['pro_second'] = bonds.apply(
+  lambda row: top.atoms[str(row['aj'])].residue in ['PRO', 'HYP'],
+  axis=1,
+)
+bonds['pro_position'] = bonds.apply(
+  lambda row: 'both' if row['pro_first'] and row['pro_second'] else ('C' if row['pro_first'] else ('N' if row['pro_second'] else 'none')),
+  axis=1,
+)
+
+# drop topology object to free memory
+del top
+gc.collect()
+
+bs = bs.join(bonds.set_index(['ai', 'aj']), on=['ai', 'aj'], how='left')
+
+# NOTE: filter out the bond at the end of Lys, that's not part of the backbone!
+# so it doesn't appear in the other plots anyways
+bs = bs.query('bond_type != "N3-CT"')
 ```
 
 ## Main Homolysis vs. Hydrolysis
@@ -437,7 +471,7 @@ p = (
         )
         + scale_fill_manual(
             values={
-                "hydrolysis": experiment_light,
+                "hydrolysis": HITS_CYAN_LIGHT,
                 "homolysis": DARK_RED,
             }
         )
@@ -709,49 +743,6 @@ p.save("./plots/force-response-homolysis.svg", dpi=72, width=single_column, heig
 
 Histogram of mean forces at 0 nN
 
-Get atomtypes from `top`, `ai` and `aj` are also the key for top.atoms
-
-```{python}
-bondstats_0['atom_i'] = [top.atoms[str(ai)].type for ai in bondstats_0['ai']]
-bondstats_0['atom_j'] = [top.atoms[str(aj)].type for aj in bondstats_0['aj']]
-bondstats_0['bond_type'] = bondstats_0.apply(
-  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
-  axis=1,
-)
-bondstats_0['external_force'] = 0.0
-
-bondstats['atom_i'] = [top.atoms[str(ai)].type for ai in bondstats['ai']]
-bondstats['atom_j'] = [top.atoms[str(aj)].type for aj in bondstats['aj']]
-bondstats['bond_type'] = bondstats.apply(
-  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
-  axis=1,
-)
-bondstats['external_force'] = 1.0
-bs = pd.concat([bondstats_0, bondstats], ignore_index=True)
-bs['mean_f_nN'] = bs['mean_f'] / 603
-bs = bs.query('bond_type != "N3-CT"') # filter out the bond at the end of Lys, that's not part of the backbone
-
-bs['residue_pair'] = bs.apply(
-  lambda row: "-".join(([top.atoms[str(row['ai'])].residue, top.atoms[str(row['aj'])].residue])),
-  axis=1,
-)
-# check for Proline or Hydroxyproline in the bond (PRO, HYP)
-# pro/hyp in first position:
-bs['pro_first'] = bs.apply(
-  lambda row: top.atoms[str(row['ai'])].residue in ['PRO', 'HYP'],
-  axis=1,
-)
-# pro/hyp in second position:
-bs['pro_second'] = bs.apply(
-  lambda row: top.atoms[str(row['aj'])].residue in ['PRO', 'HYP'],
-  axis=1,
-)
-bs['pro_position'] = bs.apply(
-  lambda row: 'both' if row['pro_first'] and row['pro_second'] else ('C' if row['pro_first'] else ('N' if row['pro_second'] else 'none')),
-  axis=1,
-)
-```
-
 ```{python}
 p = (
   ggplot(
@@ -759,14 +750,14 @@ p = (
     aes(x="mean_f_nN", fill='bond_type', color='pro_position'),
   )
   + geom_density(alpha=0.5, size=1.3)
-  + facet_wrap('external_force',
+  + facet_wrap(['external_force', "bond_type"],
       nrow=2,
       labeller=labeller(external_force=lambda x: f"Applied Force: {x} nN"), # pyright: ignore
       scales="free_y"
     )
   + labs(x="Mean Bond Force [nN]",
          y="Density",
-         fill="Bond Type",
+         # fill="Bond Type",
          color="has Pro/Hyp"
   )
   + scale_color_manual(
@@ -790,6 +781,9 @@ p = (
           },
       )
   )
+  + guides(
+    fill=False
+  )
   + theme(
       text=element_text(size=7),
       legend_position="inside",
@@ -807,14 +801,14 @@ p.save("./plots/bond-forces.svg", dpi=72, width=double_column, height=double_col
 
 # SASA
 
+## SASA
+
 ```{python}
 annotation_df = pd.DataFrame({
     "system": ["single"],
     "force": [0],
     "sasa": [MAX_SASA],
-}
-)
-mean_sasa.loc[mean_sasa['system'] == 'collagen', 'system'] = 'fibril'
+})
 
 p = (
     ggplot(mean_sasa.query("force in [0,1] and ((system in ['single', 'triple'] and shear == False) or (system == 'fibril' and shear == True or force == 0))"),
@@ -874,7 +868,6 @@ p.save("./plots/sasa.png", width=double_column, height=double_column / 3, dpi=DP
 p.save("./plots/sasa.svg", width=double_column, height=double_column / 3, dpi=DPI, verbose=False)
 ```
 
-
 ```{python}
 df = col_sasa.query("y < 9.6 & y > 7.9")
 # replace x,y,z with x_pull etc. if force is 1 nN
@@ -893,7 +886,7 @@ p = (
     )
     + labs(color="SASA [$A^2$]")
     + facet_grid(
-        rows=["force"],
+        rows=["force", "bond_type"],
         labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
     )
     + coord_equal()
@@ -1032,6 +1025,127 @@ r_squared = corr**2
 print(f"Pearson correlation coefficient between SASA and mean force: {corr:.3f} (R² = {r_squared:.3f})")
 ```
 
+# SASA Combined with Topology and Forces
+
+```{python}
+df = col_sasa.rename(columns={"force": "external_force"})
+df = df.set_index("ai").join(
+    bs.filter(items=["ai", "mean_f_nN", "external_force", "pro_position", "residue_pair"]).set_index(["ai", "external_force"]),
+    on=["ai", "external_force"],
+    how="left",
+).reset_index()
+df['any_pro'] = df['pro_position'].apply(lambda x: x != 'none')
+df['external_force'] = df['external_force'].astype(str)
+```
+
+```{python}
+p = (
+  ggplot(
+    df,
+    aes(x="sasa", color='pro_position'),
+  )
+  + geom_density(alpha=0.5, size=1.3)
+  + scale_x_log10(
+      breaks=[10**x for x in range(-5, 2, 1)],
+  )
+  + facet_wrap(['external_force'],
+      nrow=2,
+      labeller=labeller(external_force=lambda x: f"Applied Force: {x} nN"), # pyright: ignore
+      scales="free_y"
+    )
+  + labs(x="SASA [$A^2$]",
+         y="Density",
+         color="has Pro/Hyp"
+  )
+  + scale_color_manual(
+      values={
+          'none': "black",
+          'C': HITS_YELLOW_LIGHT,
+          'N': HITS_CYAN_LIGHT,
+          'both': HITS_MAGENTA_LIGHT,
+      }
+  )
+  + theme(
+      text=element_text(size=7),
+      # legend_position="inside",
+      # legend_position_inside=(0.99, 0.99),
+      # legend_text=element_text(size=7),
+      legend_background=element_blank(),
+      strip_text=element_text(weight="bold"),
+      strip_background=element_rect(fill="none", color="none"),
+  )
+)
+p.show()
+p.save("./plots/sasa_pro_density.png", dpi=DPI, width=single_column, height=single_column*2/3)
+p.save("./plots/sasa_pro_density.svg", dpi=72, width=single_column, height=single_column*2/3)
+```
+
+
+```{python}
+p = (
+  ggplot(
+    df,
+    aes(x="external_force", y="sasa", color='pro_position')
+  )
+  + geom_violin()
+  # + geom_line(aes(group="ai"), alpha=0.1)
+  + facet_wrap(['pro_position'])
+  + scale_y_log10(
+      breaks=[10**x for x in range(-5, 2, 1)],
+  )
+  + labs(x="Applied Force [nN]",
+         y="SASA [$A^2$]",
+         color="has Pro/Hyp"
+   )
+  + scale_color_manual(
+      values={
+          'none': "black",
+          'C': HITS_YELLOW_LIGHT,
+          'N': HITS_CYAN_LIGHT,
+          'both': HITS_MAGENTA_LIGHT,
+      }
+    )
+)
+p.show()
+```
+
+what about a pairwise comparion?
+
+calculate difference between 0 and 1 nN for each ai and pro_position
+
+```{python}
+df_0 = df.query("external_force == '0'").set_index(["ai", "pro_position"])['sasa']
+df_1 = df.query("external_force == '1'").set_index(["ai", "pro_position"])['sasa']
+df_diff = (df_1 - df_0).reset_index()
+df_diff = df_diff.rename(columns={0: 'sasa_diff'})
+```
+
+
+```{python}
+p = (
+  ggplot(
+    df_diff,
+    aes(x="pro_position", y="sasa", color='pro_position')
+  )
+  # + geom_violin()
+  + geom_boxplot()
+  + labs(x="Pro/Hyp Position",
+         y="SASA Difference [$A^2$] (1 nN - 0 nN)",
+         color="has Pro/Hyp"
+   )
+  + scale_color_manual(
+      values={
+          'none': "black",
+          'C': HITS_YELLOW_LIGHT,
+          'N': HITS_CYAN_LIGHT,
+          'both': HITS_MAGENTA_LIGHT,
+      }
+    )
+)
+p.show()
+p.save("./plots/sasa_pro_boxplot.png", dpi=DPI, width=single_column, height=single_column*0.6)
+p.save("./plots/sasa_pro_boxplot.svg", dpi=72, width=single_column, height=single_column*0.6)
+```
 
 # Spacially resolved Rates
 
@@ -1046,7 +1160,7 @@ col_rates = (
 )
 ```
 
-add the coordinates grom the gro file to the rates dataframe
+add the coordinates from the gro file to the rates dataframe
 
 ```{python}
 for i, row in col_rates.iterrows():
