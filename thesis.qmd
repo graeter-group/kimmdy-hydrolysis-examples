@@ -107,8 +107,8 @@ for i, row in col_sasa.iterrows():
 
 bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv")
 bondstats_0 = pd.read_csv("./examples/collagen-hydrolysis/assets/collagen_bondstats.csv")
-bondstats_0['external_force'] = 0.0
-bondstats['external_force'] = 1.0
+bondstats_0['external_force'] = 0
+bondstats['external_force'] = 1
 bs = pd.concat([bondstats_0, bondstats], ignore_index=True)
 bs['mean_f_nN'] = bs['mean_f'] / 603
 
@@ -750,15 +750,15 @@ p = (
     aes(x="mean_f_nN", fill='bond_type', color='pro_position'),
   )
   + geom_density(alpha=0.5, size=1.3)
-  + facet_wrap(['external_force', "bond_type"],
-      nrow=2,
-      labeller=labeller(external_force=lambda x: f"Applied Force: {x} nN"), # pyright: ignore
+  + facet_grid(
+      rows=['external_force'],
+      cols=['bond_type'],
+      labeller=labeller(external_force=lambda x: f"{x} nN"), # pyright: ignore
       scales="free_y"
     )
   + labs(x="Mean Bond Force [nN]",
          y="Density",
-         # fill="Bond Type",
-         color="has Pro/Hyp"
+         color="from Pro/Hyp"
   )
   + scale_color_manual(
       values={
@@ -784,6 +784,9 @@ p = (
   + guides(
     fill=False
   )
+  + lims(
+    x=(-0.5, 4)
+  )
   + theme(
       text=element_text(size=7),
       legend_position="inside",
@@ -797,6 +800,67 @@ p = (
 p.show()
 p.save("./plots/bond-forces.png", dpi=DPI, width=double_column, height=double_column*2/3)
 p.save("./plots/bond-forces.svg", dpi=72, width=double_column, height=double_column*2/3)
+```
+
+```{python}
+p = (
+  ggplot(
+    bs.query("bond_type == 'C-N'"),
+    aes(x="mean_f_nN", fill='bond_type', color='pro_position'),
+  )
+  + geom_density(alpha=0.5, size=1.3)
+  + facet_grid(
+      rows=['external_force'],
+      cols=['bond_type'],
+      labeller=labeller(external_force=lambda x: f"{x} nN"), # pyright: ignore
+      scales="free_y"
+    )
+  + labs(x="Mean Bond Force [nN]",
+         y="Density",
+         color="from Pro/Hyp"
+  )
+  + scale_color_manual(
+      values={
+          'none': "black",
+          'C': HITS_YELLOW_LIGHT,
+          'N': HITS_CYAN_LIGHT,
+          'both': HITS_MAGENTA_LIGHT,
+      }
+  )
+  + scale_fill_manual(
+      values={
+          "CT-C": MPI_DARK_GREY,
+          "C-N": HITS_SIGNALBLUE,
+          "N-CT": HITS_GREEN_LIGHT,
+      },
+      guide=guide_legend( # pyright: ignore
+          override_aes={
+              "alpha": 1,
+              "color": None
+          },
+      )
+  )
+  + guides(
+    fill=False
+  )
+  + lims(
+    x=(1.4, 4)
+  )
+  + theme(
+      text=element_text(size=7),
+      legend_position="inside",
+      legend_position_inside=(0.99, 0.99),
+      legend_direction="horizontal",
+      legend_text=element_text(size=7),
+      legend_title_position="top",
+      legend_background=element_blank(),
+      strip_text=element_text(weight="bold"),
+      strip_background=element_rect(fill="none", color="none"),
+  )
+)
+p.show()
+p.save("./plots/bond-forces-peptide.png", dpi=DPI, width=single_column, height=single_column*2/3)
+p.save("./plots/bond-forces-peptide.svg", dpi=72, width=single_column, height=single_column*2/3)
 ```
 
 # SASA
@@ -1035,7 +1099,10 @@ df = df.set_index("ai").join(
     how="left",
 ).reset_index()
 df['any_pro'] = df['pro_position'].apply(lambda x: x != 'none')
-df['external_force'] = df['external_force'].astype(str)
+df_0 = df.query("external_force == 0").set_index(["ai", "pro_position"])['sasa']
+df_1 = df.query("external_force == 1").set_index(["ai", "pro_position"])['sasa']
+df_diff = (df_1 - df_0).reset_index()
+df_diff = df_diff.rename(columns={0: 'sasa_diff'})
 ```
 
 ```{python}
@@ -1047,6 +1114,7 @@ p = (
   + geom_density(alpha=0.5, size=1.3)
   + scale_x_log10(
       breaks=[10**x for x in range(-5, 2, 1)],
+      limits=(5e-5, 1e1),
   )
   + facet_wrap(['external_force'],
       nrow=2,
@@ -1055,7 +1123,7 @@ p = (
     )
   + labs(x="SASA [$A^2$]",
          y="Density",
-         color="has Pro/Hyp"
+         color="from Pro/Hyp"
   )
   + scale_color_manual(
       values={
@@ -1074,52 +1142,16 @@ p = (
       strip_text=element_text(weight="bold"),
       strip_background=element_rect(fill="none", color="none"),
   )
+  + guides(
+    color=False
+  )
 )
 p.show()
 p.save("./plots/sasa_pro_density.png", dpi=DPI, width=single_column, height=single_column*2/3)
 p.save("./plots/sasa_pro_density.svg", dpi=72, width=single_column, height=single_column*2/3)
 ```
 
-
-```{python}
-p = (
-  ggplot(
-    df,
-    aes(x="external_force", y="sasa", color='pro_position')
-  )
-  + geom_violin()
-  # + geom_line(aes(group="ai"), alpha=0.1)
-  + facet_wrap(['pro_position'])
-  + scale_y_log10(
-      breaks=[10**x for x in range(-5, 2, 1)],
-  )
-  + labs(x="Applied Force [nN]",
-         y="SASA [$A^2$]",
-         color="has Pro/Hyp"
-   )
-  + scale_color_manual(
-      values={
-          'none': "black",
-          'C': HITS_YELLOW_LIGHT,
-          'N': HITS_CYAN_LIGHT,
-          'both': HITS_MAGENTA_LIGHT,
-      }
-    )
-)
-p.show()
-```
-
-what about a pairwise comparion?
-
-calculate difference between 0 and 1 nN for each ai and pro_position
-
-```{python}
-df_0 = df.query("external_force == '0'").set_index(["ai", "pro_position"])['sasa']
-df_1 = df.query("external_force == '1'").set_index(["ai", "pro_position"])['sasa']
-df_diff = (df_1 - df_0).reset_index()
-df_diff = df_diff.rename(columns={0: 'sasa_diff'})
-```
-
+### Pairwise comparison
 
 ```{python}
 p = (
@@ -1127,11 +1159,10 @@ p = (
     df_diff,
     aes(x="pro_position", y="sasa", color='pro_position')
   )
-  # + geom_violin()
   + geom_boxplot()
   + labs(x="Pro/Hyp Position",
          y="SASA Difference [$A^2$] (1 nN - 0 nN)",
-         color="has Pro/Hyp"
+         color="from Pro/Hyp"
    )
   + scale_color_manual(
       values={
