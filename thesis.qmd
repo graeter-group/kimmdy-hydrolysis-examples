@@ -11,7 +11,6 @@ from kimmdy_hydrolysis.rates import (
     experimental_reaction_rate_per_s,
     theoretical_reaction_rate_per_s,
 )
-import gc
 from kimmdy.plugin_utils import calculate_forces, morse_rates_from_forces, calculate_beta
 from kimmdy.topology.topology import Topology
 import pandas as pd
@@ -44,6 +43,72 @@ rate_types = ["theo", "exp"]
 shears = ["", "_shear"]
 ```
 
+
+```{python}
+#| eval: false
+top = Topology.from_path(
+    "./examples/collagen-hydrolysis/assets/collagen.top"
+)
+bonds = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv").filter(items=["ai", "aj"])
+bonds['atom_i'] = [top.atoms[str(ai)].type for ai in bonds['ai']]
+bonds['atom_j'] = [top.atoms[str(aj)].type for aj in bonds['aj']]
+bonds['bond_type'] = bonds.apply(
+  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
+  axis=1,
+)
+bonds['residue_pair'] = bonds.apply(
+  lambda row: "-".join(([top.atoms[str(row['ai'])].residue, top.atoms[str(row['aj'])].residue])),
+  axis=1,
+)
+bonds['pro_first'] = bonds.apply(
+  lambda row: top.atoms[str(row['ai'])].residue in ['PRO', 'HYP'],
+  axis=1,
+)
+bonds['pro_second'] = bonds.apply(
+  lambda row: top.atoms[str(row['aj'])].residue in ['PRO', 'HYP'],
+  axis=1,
+)
+bonds['pro_position'] = bonds.apply(
+  lambda row: 'both' if row['pro_first'] and row['pro_second'] else ('C' if row['pro_first'] else ('N' if row['pro_second'] else 'none')),
+  axis=1,
+)
+
+bonds.to_csv("./results/collagen_bond_types.csv", index=False)
+
+collagen_gro = read_gro(root / "examples/collagen-hydrolysis/assets/nvt.gro")
+atoms = [
+    atom for atom in collagen_gro.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
+]
+collagen_gro_pull = read_gro(
+    root / "examples/collagen-hydrolysis/assets/npt.gro"
+)
+atoms_pull = [
+    atom for atom in collagen_gro_pull.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
+]
+
+sasa = pd.read_csv("./results/sasa.csv")
+sasa.ai = sasa.ai.astype(int)
+col_sasa = (
+    sasa.query("system == 'collagen' and (shear == True or force == 0 and shear == False)")
+    .groupby(["ai", "force"])
+    .agg({"sasa": "mean"})
+    .reset_index()
+)
+for i, row in col_sasa.iterrows():
+    ai = row["ai"]
+    atom = atoms[int(ai) - 1]
+    col_sasa.at[i, "x"] = atom.position[0]
+    col_sasa.at[i, "y"] = atom.position[1]
+    col_sasa.at[i, "z"] = atom.position[2]
+
+    atom_pull = atoms_pull[int(ai) - 1]
+    col_sasa.at[i, "x_pull"] = atom_pull.position[0]
+    col_sasa.at[i, "y_pull"] = atom_pull.position[1]
+    col_sasa.at[i, "z_pull"] = atom_pull.position[2]
+
+col_sasa.to_csv("./results/collagen_sasa_coords.csv", index=False)
+```
+
 # Rates
 
 ## Load data
@@ -74,36 +139,7 @@ mean_sasa: pd.DataFrame = (
 )
 mean_sasa.loc[mean_sasa['system'] == 'collagen', 'system'] = 'fibril'
 
-# collagen before pulling
-collagen_gro = read_gro(root / "examples/collagen-hydrolysis/assets/nvt.gro")
-atoms = [
-    atom for atom in collagen_gro.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
-]
-collagen_gro_pull = read_gro(
-    root / "examples/collagen-hydrolysis/assets/npt.gro"
-)
-atoms_pull = [
-    atom for atom in collagen_gro_pull.atoms if atom.residue_name not in ["SOL", "CL", "NA"]
-]
-
-col_sasa = (
-    sasa.query("system == 'collagen' and (shear == True or force == 0 and shear == False)")
-    .groupby(["ai", "force"])
-    .agg({"sasa": "mean"})
-    .reset_index()
-)
-for i, row in col_sasa.iterrows():
-    ai = row["ai"]
-    atom = atoms[int(ai) - 1]
-    col_sasa.at[i, "x"] = atom.position[0]
-    col_sasa.at[i, "y"] = atom.position[1]
-    col_sasa.at[i, "z"] = atom.position[2]
-
-    atom_pull = atoms_pull[int(ai) - 1]
-    col_sasa.at[i, "x_pull"] = atom_pull.position[0]
-    col_sasa.at[i, "y_pull"] = atom_pull.position[1]
-    col_sasa.at[i, "z_pull"] = atom_pull.position[2]
-
+col_sasa = pd.read_csv("./results/collagen_sasa_coords.csv")
 
 bondstats = pd.read_csv("./results/collagen_1nN_shear_bondstats.csv")
 bondstats_0 = pd.read_csv("./examples/collagen-hydrolysis/assets/collagen_bondstats.csv")
@@ -112,37 +148,7 @@ bondstats['external_force'] = 1
 bs = pd.concat([bondstats_0, bondstats], ignore_index=True)
 bs['mean_f_nN'] = bs['mean_f'] / 603
 
-top = Topology.from_path(
-    "./examples/collagen-hydrolysis/assets/collagen.top"
-)
-bonds = bondstats.filter(items=["ai", "aj"])
-bonds['atom_i'] = [top.atoms[str(ai)].type for ai in bonds['ai']]
-bonds['atom_j'] = [top.atoms[str(aj)].type for aj in bonds['aj']]
-bonds['bond_type'] = bonds.apply(
-  lambda row: "-".join(([row['atom_i'], row['atom_j']])),
-  axis=1,
-)
-bonds['residue_pair'] = bonds.apply(
-  lambda row: "-".join(([top.atoms[str(row['ai'])].residue, top.atoms[str(row['aj'])].residue])),
-  axis=1,
-)
-bonds['pro_first'] = bonds.apply(
-  lambda row: top.atoms[str(row['ai'])].residue in ['PRO', 'HYP'],
-  axis=1,
-)
-bonds['pro_second'] = bonds.apply(
-  lambda row: top.atoms[str(row['aj'])].residue in ['PRO', 'HYP'],
-  axis=1,
-)
-bonds['pro_position'] = bonds.apply(
-  lambda row: 'both' if row['pro_first'] and row['pro_second'] else ('C' if row['pro_first'] else ('N' if row['pro_second'] else 'none')),
-  axis=1,
-)
-
-# drop topology object to free memory
-del top
-gc.collect()
-
+bonds = pd.read_csv("./results/collagen_bond_types.csv")
 bs = bs.join(bonds.set_index(['ai', 'aj']), on=['ai', 'aj'], how='left')
 
 # NOTE: filter out the bond at the end of Lys, that's not part of the backbone!
@@ -950,7 +956,7 @@ p = (
     )
     + labs(color="SASA [$A^2$]")
     + facet_grid(
-        rows=["force", "bond_type"],
+        rows=["force"],
         labeller=labeller(force=lambda x: str(x) + " nN") # pyright: ignore
     )
     + coord_equal()
@@ -1084,7 +1090,7 @@ p.save("./plots/sasa_vs_mean_force.svg", width=single_column, height=single_colu
 correlation coefficient between sasa and mean force
 
 ```{python}
-corr = df[['sasa', 'mean_f']].corr(method='pearson').iloc[0,1]
+corr = df[['sasa', 'mean_f']].corr(method='pearson').iloc[0,1] # pyright: ignore
 r_squared = corr**2
 print(f"Pearson correlation coefficient between SASA and mean force: {corr:.3f} (R² = {r_squared:.3f})")
 ```
@@ -1183,23 +1189,17 @@ p.save("./plots/sasa_pro_boxplot.svg", dpi=72, width=single_column, height=singl
 ```{python}
 col_rates = (
     sampled_rates.query(
-        "system == 'Fibril' & force == 0 & ph == 7.4 & reaction == 'hydrolysis' & rate_type == 'theo'"
+        "system == 'Fibril' & force == 1 & shear == True & ph == 7.4 & reaction == 'hydrolysis' & rate_type == 'theo'"
     )
     .groupby(["ai"])
     .agg({"rate": "mean"})
     .reset_index()
+    .join(
+      col_sasa.set_index("ai"),
+      on="ai",
+      how="left",
+    )
 )
-```
-
-add the coordinates from the gro file to the rates dataframe
-
-```{python}
-for i, row in col_rates.iterrows():
-    ai = row["ai"]
-    atom = atoms[int(ai) - 1]
-    col_rates.at[i, "x"] = atom.position[0]
-    col_rates.at[i, "y"] = atom.position[1]
-    col_rates.at[i, "z"] = atom.position[2]
 ```
 
 ```{python}
@@ -1213,26 +1213,31 @@ p = (
 p.show()
 ```
 
-
 plot in 3d colored by rate
+
+
+```{python}
+slice = col_rates.query("z < 55 & z > 35")
+```
 
 ```{python}
 fig = plt.figure()
 ax = fig.add_subplot(111, projection="3d")
 ax.scatter(
-    col_rates["x"],
-    col_rates["y"],
-    col_rates["z"],
-    c=col_rates["rate"],
+    slice["x_pull"],
+    slice["y_pull"],
+    slice["z_pull"],
+    c=slice["rate"],
     cmap="viridis",
 )
-ax.set_title("Collagen rates at 0 nN")
+# make sure the scaling of the axes corresponds to the actual distances
+ax.set_box_aspect(( # pyright: ignore
+    np.ptp(slice["x_pull"]),
+    np.ptp(slice["y_pull"]),
+    np.ptp(slice["z_pull"]),
+))
+ax.set_title("Collagen rates at 1 nN")
 plt.show()
 ```
-
-
-
-
-
 
 
