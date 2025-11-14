@@ -14,6 +14,13 @@ vmd -e ./scripts/triplehelix-gly-pro-pull.vmd
 
 
 #%%
+gro="./examples/collagen-hydrolysis/assets/nvt.gro"
+vmd $gro
+
+#%%
+vmd -e ./scripts/vis-crosslinks.vmd
+
+
 #%%
 #%%
 #%%
