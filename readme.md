@@ -6,7 +6,7 @@ This also includes tips for interactively stepping through KIMMDY to explore how
 ## Setup
 
 ```bash
-./scripts/setup.sh
+./setup.sh
 ```
 
 ## Run Simulations
