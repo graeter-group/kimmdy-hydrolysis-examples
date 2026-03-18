@@ -39,3 +39,4 @@ examples/collagen-hydrolysis/assets/npt.gro
 examples/collagen-hydrolysis/assets/nvt.gro
 
 **/*.quarto_ipynb
+results.zip
